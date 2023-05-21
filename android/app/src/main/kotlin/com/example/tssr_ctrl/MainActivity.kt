@@ -1,4 +1,4 @@
-package com.example.tssr_ctrl
+package com.neptune.tssr
 
 import io.flutter.embedding.android.FlutterActivity
 

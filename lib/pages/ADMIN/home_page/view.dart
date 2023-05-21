@@ -6,10 +6,11 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
-import 'package:tssr_ctrl/pages/ADMIN/TSSR%20Page/tssrpage_index.dart';
+import 'package:tssr_ctrl/pages/ADMIN/TSSR/TSSR%20View/tssrpage_index.dart';
 import 'package:tssr_ctrl/pages/ADMIN/home_page/controller.dart';
 import 'package:tssr_ctrl/routes/names.dart';
 import 'package:tssr_ctrl/routes/shared_pref_strings.dart';
+import 'package:tssr_ctrl/services/pdf_service.dart';
 import 'package:tssr_ctrl/widgets/drawer.dart';
 import 'package:http/http.dart' as http;
 
@@ -22,13 +23,6 @@ class HomePage extends GetView<HomePageController> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final result = await http.get(Uri.parse('https://randomuser.me/api'));
-          final json = jsonDecode(result.body.toString());
-          print(json['results'][0]['gender']);
-        },
-      ),
       drawer: Obx(() {
         return CustomDrawer(
             0,
@@ -117,11 +111,14 @@ class HomePage extends GetView<HomePageController> {
                                 CircleAvatar(
                                   radius: 50,
                                   backgroundColor: Colors.white,
-                                  child: Icon(
-                                    Icons.person,
-                                    color: Colors.purple,
-                                    size: 50,
+                                  child: Image.asset(
+                                    'assets/ic_launcher.png',
                                   ),
+                                  // child: Icon(
+                                  //   Icons.person,
+                                  //   color: Colors.purple,
+                                  //   size: 50,
+                                  // ),
                                 ),
                                 SizedBox(width: 20),
                                 SizedBox(
@@ -162,47 +159,24 @@ class HomePage extends GetView<HomePageController> {
                     Wrap(
                       alignment: WrapAlignment.center,
                       children: [
-                        HomeScreenButton('TSSR Upload', Icons.upload,
-                            AppRouteNames.TSSR_UPLOAD),
                         HomeScreenButton(
-                            'TSSR Data',
+                            'TSSR',
                             Icons.data_thresholding_outlined,
-                            AppRouteNames.TSSR_ADMIN),
-                        HomeScreenButton('TSSC Upload', Icons.upload_outlined,
-                            AppRouteNames.TSSC_UPLOAD),
-                        HomeScreenButton(
-                            'TSSC Data',
-                            Icons.data_thresholding_sharp,
-                            AppRouteNames.TSSC_ADMIN),
-                        HomeScreenButton(
-                            'Hall Ticket Upload',
-                            Icons.format_list_bulleted_add,
-                            AppRouteNames.HALL_TICKET_UPLOAD),
-                        HomeScreenButton(
-                            'Hall Tickets',
-                            Icons.format_list_bulleted,
-                            AppRouteNames.HALL_TICKET_VIEW),
-                        HomeScreenButton(
-                            'Franchise Upload',
-                            Icons.add_business_outlined,
-                            AppRouteNames.FRANCHISE_UPLOAD),
-                        HomeScreenButton(
-                            'Franchise Data',
-                            Icons.school_outlined,
-                            AppRouteNames.FRANCHISE_DATA),
+                            AppRouteNames.TSSR_HOME_PAGE),
+                        HomeScreenButton('TSSC', Icons.data_thresholding_sharp,
+                            AppRouteNames.TSSC_HOME_PAGE),
+                        HomeScreenButton('Study Centres', Icons.school_outlined,
+                            AppRouteNames.STUDY_CENTRE_HOME_PAGE),
                         HomeScreenButton(
                             'Gallery',
                             Icons.photo_size_select_actual_outlined,
                             AppRouteNames.GALLERY),
-                        HomeScreenButton(
-                            'Result Upload', Icons.assignment_add, '/'),
-                        HomeScreenButton('Result Data', Icons.assessment, '/'),
                         HomeScreenButton('T Store', Icons.storefront_outlined,
                             AppRouteNames.TSTORE_ADMIN),
-                        HomeScreenButton(
-                            'Report', Icons.bug_report_outlined, '/'),
+                        HomeScreenButton('Report', Icons.info,
+                            AppRouteNames.REPORT_HOME_PAGE),
                       ],
-                    )
+                    ),
                   ],
                 ),
               )

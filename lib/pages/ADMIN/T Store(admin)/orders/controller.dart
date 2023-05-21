@@ -6,27 +6,47 @@ class TOrdersController extends GetxController {
   TOrdersController();
   final state = TOrdersState();
 
-   @override
+  @override
   void onReady() async {
     // TODO: implement onReady
     super.onReady();
     //
-    state.query.value =
-        DatabaseService.OrderCollection.orderBy('book').where('');
+    state.inComingquery.value = DatabaseService.OrderCollection.orderBy('book')
+        .where('accepted', isEqualTo: 'false');
+
+    state.onGoingquery.value = DatabaseService.OrderCollection.orderBy('book')
+        .where('accepted', isEqualTo: 'true');
     // update();
   }
 
-  void changeSortOptions(String sortOption) {
+  void changeSortOptions(String sortOption, bool isIncoming) {
     if (sortOption != null) {
-      state.query.value = DatabaseService.OrderCollection.orderBy(sortOption);
+      isIncoming
+          ? state.inComingquery.value = DatabaseService.OrderCollection.where(
+                  'accepted',
+                  isEqualTo: 'false')
+              .orderBy(sortOption)
+          : state.onGoingquery.value = DatabaseService.OrderCollection.where(
+                  'accepted',
+                  isEqualTo: 'true')
+              .orderBy(sortOption);
     }
+    
   }
 
-  void searchByString(String searchString) {
-    state.query.value = DatabaseService.OrderCollection
-        .orderBy('book')
-        .where('book', isGreaterThanOrEqualTo: '$searchString')
-        .where('book', isLessThanOrEqualTo: '$searchString\uf8ff');
+  void searchByString(String searchString, bool isIncoming) {
+    isIncoming
+        ? state.inComingquery.value = DatabaseService.OrderCollection.where(
+                'accepted',
+                isEqualTo: 'false')
+            .orderBy('book')
+            .where('book', isGreaterThanOrEqualTo: '$searchString')
+            .where('book', isLessThanOrEqualTo: '$searchString\uf8ff')
+        : state.onGoingquery.value =
+            DatabaseService.OrderCollection.where('accepted', isEqualTo: 'true')
+                .orderBy('book')
+                .where('book', isGreaterThanOrEqualTo: '$searchString')
+                .where('book', isLessThanOrEqualTo: '$searchString\uf8ff');
     // .where('reg_no', isEqualTo: '$searchString')
     // .where('reg_no', isEqualTo: '$searchString\uf8ff');
   }

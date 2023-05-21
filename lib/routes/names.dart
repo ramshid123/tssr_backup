@@ -1,5 +1,9 @@
 class AppRouteNames {
   //Admin
+  static final TSSR_HOME_PAGE = '/tssr_home_page';
+  static final TSSC_HOME_PAGE = '/tssc_home_page';
+  static final STUDY_CENTRE_HOME_PAGE = '/study_centre_home_page';
+  static final REPORT_HOME_PAGE = '/report_home_page';
   static final TSSR_ADMIN = '/tssr_admin';
   static final TSSR_UPLOAD = '/tssr_upload';
   static final HOME = '/home';
@@ -13,9 +17,13 @@ class AppRouteNames {
   static final TSTORE_ADMIN = '/t_store_admin';
   static final TSTORE_ADMIN_ORDERS = '/t_store_admin_orders';
   static final TSTORE_ADMIN_BOOKS = '/t_store_admin_books';
+  static final COURSES_ADMIN = '/courses_admin';
 
   //franchise
   static final HOME_FR = '/home_fr';
+  static final STUDENT_UPLOAD = '/student_upload';
+  static final STUDENT_VIEW = '/student_view';
+  static final REPORT_HOME_PAGE_FR = '/report_home_page_franchise';
 
   //others
   static final LOGIN = '/login';
@@ -23,4 +31,6 @@ class AppRouteNames {
   static final T_STORE_FR = '/t_store_fr';
   static final T_STORE_ITEM_FR = '/t_store_item_fr';
   static final ORDER_SUCCESS = '/order_success';
+
+  static final TEST_PAGE = '/test_page';
 }

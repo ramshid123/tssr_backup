@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tssr_ctrl/services/authentication_service.dart';
 import 'package:tssr_ctrl/services/database_service.dart';
+import 'package:intl/intl.dart';
 import 'loginpage_index.dart';
 import 'package:tssr_ctrl/routes/shared_pref_strings.dart';
 
@@ -21,25 +22,45 @@ class LoginPageController extends GetxController {
                     isEqualTo: email.trim())
                 .get();
         final userInfo = userInfoSnapshot.docs.single.data();
+        final renewalDate = DateFormat("dd/MM/yyyy").parse(userInfo['renewal']);
 
-        // final List<String> courses = userInfo['courses'];
+        final currentDate = DateTime(
+            DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
-        await SF.setBool(SharedPrefStrings.ISADMIN,
-            userInfo['isAdmin'] == 'true' ? true : false);
-        await SF.setString(
-            SharedPrefStrings.CENTRE_HEAD, userInfo['centre_head']);
-        await SF.setString(
-            SharedPrefStrings.CENTRE_NAME, userInfo['centre_name']);
-        await SF.setString(SharedPrefStrings.ATC, userInfo['atc']);
-        await SF.setString(SharedPrefStrings.PLACE, userInfo['place']);
-        await SF.setString(SharedPrefStrings.DISTRICT, userInfo['district']);
-        await SF.setString(SharedPrefStrings.DOC_ID, userInfo['doc_id']);
-        await SF.setString(SharedPrefStrings.RENEWAL, userInfo['renewal']);
+        if (renewalDate.isAfter(DateTime.now()) || renewalDate == currentDate) {
+          final List temp_courses = userInfo['courses'];
 
-        await SF.setString(SharedPrefStrings.PASSWORD, password.trim());
-        await SF.setString(SharedPrefStrings.EMAIL, email.trim());
-        await AuthService.auth.signInWithEmailAndPassword(
-            email: email.trim(), password: password.trim());
+          final courses = temp_courses.map((e) => e.toString()).toList();
+
+          await SF.setStringList(SharedPrefStrings.COURSES, courses);
+
+          await SF.setBool(SharedPrefStrings.ISADMIN,
+              userInfo['isAdmin'] == 'true' ? true : false);
+          await SF.setString(
+              SharedPrefStrings.CENTRE_HEAD, userInfo['centre_head']);
+          await SF.setString(
+              SharedPrefStrings.CENTRE_NAME, userInfo['centre_name']);
+          await SF.setString(SharedPrefStrings.ATC, userInfo['atc']);
+          await SF.setString(SharedPrefStrings.PLACE, userInfo['place']);
+          await SF.setString(SharedPrefStrings.DISTRICT, userInfo['district']);
+          await SF.setString(SharedPrefStrings.DOC_ID, userInfo['doc_id']);
+          await SF.setString(SharedPrefStrings.RENEWAL, userInfo['renewal']);
+
+          await SF.setString(SharedPrefStrings.PASSWORD, password.trim());
+          await SF.setString(SharedPrefStrings.EMAIL, email.trim());
+          await AuthService.auth.signInWithEmailAndPassword(
+              email: email.trim(), password: password.trim());
+        } else {
+          Get.showSnackbar(
+            GetSnackBar(
+              title: 'Renewal Expreied',
+              message:
+                  'Your renewal period is expired. Kindly contact the admin.',
+              backgroundColor: Colors.red,
+              duration: 5.seconds,
+            ),
+          );
+        }
       } on FirebaseAuthException catch (e) {
         print(e);
         await SF.setString(SharedPrefStrings.EMAIL, '');

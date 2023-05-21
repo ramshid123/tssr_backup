@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
 import 'package:intl/intl.dart';
-import 'package:tssr_ctrl/pages/ADMIN/TSSC%20Page/controller.dart';
-import 'package:tssr_ctrl/pages/ADMIN/TSSR%20Page/tssrpage_index.dart';
+import 'package:tssr_ctrl/pages/ADMIN/TSSC/TSSC%20View/controller.dart';
+import 'package:tssr_ctrl/pages/ADMIN/TSSR/TSSR%20View/tssrpage_index.dart';
+import 'package:tssr_ctrl/services/database_service.dart';
+import 'package:tssr_ctrl/widgets/tssr.dart';
 
-Widget TsscCard(var data, TsscPageController controller) {
+Widget TsscCard(var data, TsscPageController controller, BuildContext context) {
   final key = GlobalKey();
   return Dismissible(
     key: key,
@@ -22,10 +24,118 @@ Widget TsscCard(var data, TsscPageController controller) {
         ],
       ),
     ),
-    onDismissed: (val) {
-      // controller.deleteFromList(data);
+    secondaryBackground: Container(
+      color: Colors.blue,
+      child: Row(
+        children: [
+          Spacer(),
+          Icon(
+            Icons.edit,
+            size: 100,
+            color: Colors.white,
+          ),
+        ],
+      ),
+    ),
+    onDismissed: (val) async {
+      try {
+        await DatabaseService.tsscCollection.doc(data['doc_id']).delete();
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            duration: 10.seconds,
+            content: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Undo the delete',
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+                IconButton(
+                    color: Colors.white,
+                    onPressed: () async {
+                      await DatabaseService.tsscCollection
+                          .doc(data['doc_id'])
+                          .set({
+                        'doc_id': data['doc_id'],
+                        'name': data['name'],
+                        'reg_no': data['reg_no'],
+                        'skill': data['skill'],
+                        'skill_centre': data['skill_centre'],
+                        'exam_date': data['exam_date'],
+                      }).then((value) => ScaffoldMessenger.of(context)
+                              .hideCurrentSnackBar());
+                    },
+                    icon: Icon(Icons.undo))
+              ],
+            ),
+          ),
+        );
+      } catch (e) {
+        print(e);
+      }
     },
-    direction: DismissDirection.startToEnd,
+    confirmDismiss: (direction) async {
+      if (direction == DismissDirection.endToStart) {
+        final homectrl = TsscPageController();
+        await Get.bottomSheet(
+          Container(
+            padding: EdgeInsets.all(20),
+            height: Get.height * 0.75,
+            color: Color.fromRGBO(255, 255, 255, 1),
+            child: SingleChildScrollView(
+              child: Form(
+                key: homectrl.state.editFormKey,
+                child: Column(
+                  children: [
+                    EditBoxFormField('Name', homectrl.state.name, data['name']),
+                    EditBoxFormField(
+                        'Register No', homectrl.state.reg_no, data['reg_no']),
+                    EditBoxFormField(
+                        'Skill', homectrl.state.skill, data['skill']),
+                    EditBoxFormField('Skill Centre',
+                        homectrl.state.skill_centre, data['skill_centre']),
+                    EditBoxFormField('Exam Date', homectrl.state.exam_date,
+                        data['exam_date']),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (homectrl.state.editFormKey.currentState!
+                            .validate()) {
+                          try {
+                            await DatabaseService.tsscCollection
+                                .doc(data['doc_id'])
+                                .update({
+                              'name': homectrl.state.name.text,
+                              'reg_no': homectrl.state.reg_no.text,
+                              'skill': homectrl.state.skill.text,
+                              'skill_centre': homectrl.state.skill_centre.text,
+                              'exam_date': homectrl.state.exam_date.text,
+                            }).then((value) => Navigator.of(context).pop());
+                          } catch (e) {
+                            print(e);
+                          }
+                        }
+                      },
+                      child: Text('Submit'),
+                      style: ElevatedButton.styleFrom(
+                          fixedSize: Size(Get.width, 50),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20))),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+        return false;
+      } else {
+        return true;
+      }
+    },
+    direction: DismissDirection.horizontal,
     child: Container(
       margin: EdgeInsets.symmetric(vertical: 10),
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -169,8 +279,8 @@ Widget CustomTextForm({
           else if (hintText.toLowerCase().contains('email') &&
               !GetUtils.isEmail(val))
             return 'Invalid Email Format';
-          else if (hintText.toLowerCase().contains('password') && val.length < 6)
-            return 'Must be atleast 6 charecters';
+          else if (hintText.toLowerCase().contains('password') &&
+              val.length < 6) return 'Must be atleast 6 charecters';
 
           return null;
         },

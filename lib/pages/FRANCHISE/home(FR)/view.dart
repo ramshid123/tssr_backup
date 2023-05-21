@@ -151,20 +151,17 @@ class HomeFrPage extends GetView<HomeFrController> {
                       alignment: WrapAlignment.center,
                       children: [
                         HomeScreenButton('Student Data Upload', Icons.upload,
-                            '/'),
+                            AppRouteNames.STUDENT_UPLOAD),
                         HomeScreenButton(
                             'Student Data',
                             Icons.data_thresholding_outlined,
-                            '/'),
+                            AppRouteNames.STUDENT_VIEW),
+                        HomeScreenButton('T Store', Icons.storefront_outlined,
+                            AppRouteNames.T_STORE_FR),
                         HomeScreenButton(
-                            'Result Upload', Icons.assignment_add, '/'),
-                        HomeScreenButton('Result Data', Icons.assessment, '/'),
-                        HomeScreenButton(
-                            'T Store', Icons.storefront_outlined, AppRouteNames.T_STORE_FR),
-                        HomeScreenButton(
-                            'Report', Icons.bug_report_outlined, '/'),
+                            'Report', Icons.bug_report_outlined, AppRouteNames.REPORT_HOME_PAGE_FR),
                       ],
-                    )
+                    ),
                   ],
                 ),
               )

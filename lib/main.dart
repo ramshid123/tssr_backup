@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
+import 'package:tssr_ctrl/services/pdfTest.dart';
+import 'test.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,9 +29,10 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.deepPurple,
         primarySwatch: Colors.deepPurple,
       ),
+      title: 'TASC App',
+      // home: TestPage(),
       initialRoute: AppRouteNames.LOGIN,
       getPages: AppRoutes.routes,
     );
   }
 }
-

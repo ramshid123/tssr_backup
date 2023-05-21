@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
 import 'package:intl/intl.dart';
-import 'package:tssr_ctrl/pages/ADMIN/TSSC%20Page/controller.dart';
-import 'package:tssr_ctrl/pages/ADMIN/TSSR%20Page/tssrpage_index.dart';
-import 'package:tssr_ctrl/pages/ADMIN/hall%20tkt%20Page/controller.dart';
+import 'package:tssr_ctrl/pages/ADMIN/TSSC/TSSC%20View/controller.dart';
+import 'package:tssr_ctrl/pages/ADMIN/TSSR/TSSR%20View/tssrpage_index.dart';
+import 'package:tssr_ctrl/pages/ADMIN/TSSR/hall%20tkt%20View/controller.dart';
+import 'package:tssr_ctrl/services/database_service.dart';
+import 'package:tssr_ctrl/widgets/tssr.dart';
 
-Widget HTCard(var data, HallTicketPageController controller) {
+Widget HTCard(
+    var data, HallTicketPageController controller, BuildContext context) {
   final key = GlobalKey();
   return Dismissible(
     key: key,
@@ -23,10 +26,126 @@ Widget HTCard(var data, HallTicketPageController controller) {
         ],
       ),
     ),
-    onDismissed: (val) {
-      // controller.deleteFromList(data);
+    secondaryBackground: Container(
+      color: Colors.blue,
+      child: Row(
+        children: [
+          Spacer(),
+          Icon(
+            Icons.edit,
+            size: 100,
+            color: Colors.white,
+          ),
+        ],
+      ),
+    ),
+    onDismissed: (val) async {
+      try {
+        await DatabaseService.hallTKTCollection.doc(data['doc_id']).delete();
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            duration: 10.seconds,
+            content: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Undo the delete',
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+                IconButton(
+                    color: Colors.white,
+                    onPressed: () async {
+                      await DatabaseService.hallTKTCollection
+                          .doc(data['doc_id'])
+                          .set({
+                        'doc_id': data['doc_id'],
+                        'name': data['name'],
+                        'admission_no': data['admission_no'],
+                        'exam_centre': data['exam_centre'],
+                        'course': data['course'],
+                        'exam_time': data['exam_time'],
+                        'study_centre': data['study_centre'],
+                        'exam_date': data['exam_date'],
+                      }).then((value) => ScaffoldMessenger.of(context)
+                              .hideCurrentSnackBar());
+                    },
+                    icon: Icon(Icons.undo))
+              ],
+            ),
+          ),
+        );
+      } catch (e) {
+        print(e);
+      }
     },
-    direction: DismissDirection.startToEnd,
+    confirmDismiss: (direction) async {
+      if (direction == DismissDirection.endToStart) {
+        final homectrl = HallTicketPageController();
+        await Get.bottomSheet(
+          Container(
+            padding: EdgeInsets.all(20),
+            height: Get.height * 0.75,
+            color: Color.fromRGBO(255, 255, 255, 1),
+            child: SingleChildScrollView(
+              child: Form(
+                key: homectrl.state.editFormKey,
+                child: Column(
+                  children: [
+                    EditBoxFormField('Name', homectrl.state.name, data['name']),
+                    EditBoxFormField('Admission No',
+                        homectrl.state.admission_no, data['admission_no']),
+                    EditBoxFormField(
+                        'Course', homectrl.state.course, data['course']),
+                    EditBoxFormField('Study Centre',
+                        homectrl.state.study_centre, data['study_centre']),
+                    EditBoxFormField('Exam Centre', homectrl.state.exam_centre,
+                        data['exam_centre']),
+                    EditBoxFormField('Exam Date', homectrl.state.exam_date,
+                        data['exam_date']),
+                    EditBoxFormField('Exam Time', homectrl.state.exam_time,
+                        data['exam_time']),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (homectrl.state.editFormKey.currentState!
+                            .validate()) {
+                          try {
+                            await DatabaseService.hallTKTCollection
+                                .doc(data['doc_id'])
+                                .update({
+                              'name': homectrl.state.name.text,
+                              'admission_no': homectrl.state.admission_no.text,
+                              'course': homectrl.state.course.text,
+                              'study_centre': homectrl.state.study_centre.text,
+                              'exam_centre': homectrl.state.exam_centre.text,
+                              'exam_date': homectrl.state.exam_date.text,
+                              'exam_time': homectrl.state.exam_time.text,
+                            }).then((value) => Navigator.of(context).pop());
+                          } catch (e) {
+                            print(e);
+                          }
+                        }
+                      },
+                      child: Text('Submit'),
+                      style: ElevatedButton.styleFrom(
+                          fixedSize: Size(Get.width, 50),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20))),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+        return false;
+      } else {
+        return true;
+      }
+    },
+    direction: DismissDirection.horizontal,
     child: Container(
       margin: EdgeInsets.symmetric(vertical: 10),
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),

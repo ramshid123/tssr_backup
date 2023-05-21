@@ -12,21 +12,21 @@ class TStorePageController extends GetxController{
     super.onReady();
     //
     state.query.value =
-        DatabaseService.hallTKTCollection.orderBy('book').where('');
+        DatabaseService.StoreCollection.orderBy('name').where('');
     // update();
   }
 
   void changeSortOptions(String sortOption) {
     if (sortOption != null) {
-      state.query.value = DatabaseService.hallTKTCollection.orderBy(sortOption);
+      state.query.value = DatabaseService.StoreCollection.orderBy(sortOption);
     }
   }
 
   void searchByString(String searchString) {
-    state.query.value = DatabaseService.hallTKTCollection
-        .orderBy('book')
-        .where('book', isGreaterThanOrEqualTo: '$searchString')
-        .where('book', isLessThanOrEqualTo: '$searchString\uf8ff');
+    state.query.value = DatabaseService.StoreCollection
+        .orderBy('name')
+        .where('name', isGreaterThanOrEqualTo: '$searchString')
+        .where('name', isLessThanOrEqualTo: '$searchString\uf8ff');
     // .where('reg_no', isEqualTo: '$searchString')
     // .where('reg_no', isEqualTo: '$searchString\uf8ff');
   }

@@ -4,5 +4,5 @@ import 'package:tssr_ctrl/services/database_service.dart';
 
 class TStorePageState {
   Rx<Query<Map<String, dynamic>>> query =
-      DatabaseService.StoreCollection.orderBy('name').where('').obs;
+      DatabaseService.StoreCollection.orderBy('book').where('').obs;
 }

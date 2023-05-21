@@ -9,4 +9,6 @@ class DatabaseService{
   static final FranchiseCollection = db.collection('Franchise');
   static final StoreCollection = db.collection('TStore');
   static final OrderCollection = db.collection('Orders');
+  static final CourseCollection = db.collection('Courses');
+  static final StudentDetailsCollection = db.collection('StudentDetails');
 }

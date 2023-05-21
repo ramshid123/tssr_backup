@@ -1,12 +1,16 @@
+import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
 import 'package:intl/intl.dart';
-import 'package:tssr_ctrl/pages/ADMIN/TSSC%20Page/controller.dart';
-import 'package:tssr_ctrl/pages/ADMIN/TSSR%20Page/tssrpage_index.dart';
-import 'package:tssr_ctrl/pages/ADMIN/franchise_page/franchisepage_index.dart';
+import 'package:tssr_ctrl/pages/ADMIN/TSSC/TSSC%20View/controller.dart';
+import 'package:tssr_ctrl/pages/ADMIN/TSSR/TSSR%20View/tssrpage_index.dart';
+import 'package:tssr_ctrl/pages/ADMIN/study_centre/franchise_view/franchisepage_index.dart';
+import 'package:tssr_ctrl/services/database_service.dart';
+import 'package:tssr_ctrl/widgets/tssr.dart';
 
-Widget FranchiseCard(var data, FranchisePageController controller) {
+Widget FranchiseCard(
+    var data, FranchisePageController controller, BuildContext context) {
   final key = GlobalKey();
   return Dismissible(
     key: key,
@@ -23,10 +27,224 @@ Widget FranchiseCard(var data, FranchisePageController controller) {
         ],
       ),
     ),
-    onDismissed: (val) {
-      // controller.deleteFromList(data);
+    secondaryBackground: Container(
+      color: Colors.blue,
+      child: Row(
+        children: [
+          Spacer(),
+          Icon(
+            Icons.edit,
+            size: 100,
+            color: Colors.white,
+          ),
+        ],
+      ),
+    ),
+    onDismissed: (val) async {
+      try {
+        await DatabaseService.FranchiseCollection.doc(data['doc_id']).delete();
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            duration: 10.seconds,
+            content: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Undo the delete',
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+                IconButton(
+                    color: Colors.white,
+                    onPressed: () async {
+                      await DatabaseService.FranchiseCollection.doc(
+                              data['doc_id'])
+                          .set({
+                        'doc_id': data['doc_id'],
+                        'courses': data['courses'],
+                        'centre_name': data['centre_name'],
+                        'centre_head': data['centre_head'],
+                        'atc': data['atc'],
+                        'district': data['district'],
+                        'place': data['place'],
+                        'renewal': data['renewal'],
+                        'email': data['email'],
+                        'password': data['password'],
+                        'isAdmin': data['isAdmin'],
+                        'uid': data['uid'],
+                      }).then((value) => ScaffoldMessenger.of(context)
+                              .hideCurrentSnackBar());
+                    },
+                    icon: Icon(Icons.undo))
+              ],
+            ),
+          ),
+        );
+      } catch (e) {
+        print(e);
+      }
     },
-    direction: DismissDirection.startToEnd,
+    confirmDismiss: (direction) async {
+      if (direction == DismissDirection.endToStart) {
+        final homectrl = FranchisePageController();
+        await Get.bottomSheet(
+          Container(
+            padding: EdgeInsets.all(20),
+            height: Get.height * 0.75,
+            color: Colors.white,
+            child: SingleChildScrollView(
+              child: Form(
+                key: homectrl.state.editFormKey,
+                child: Column(
+                  children: [
+                    EditBoxFormField('Centre Name', homectrl.state.centre_name,
+                        data['centre_name']),
+                    EditBoxFormField('Centre Head', homectrl.state.centre_head,
+                        data['centre_head']),
+                    EditBoxFormField(
+                        'ATC Code', homectrl.state.atc, data['atc']),
+                    EditBoxFormField(
+                        'District', homectrl.state.district, data['district']),
+                    EditBoxFormField(
+                        'Place', homectrl.state.place, data['place']),
+                    EditBoxFormField('Renewal Date', homectrl.state.renewal,
+                        data['renewal']),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () async => Get.defaultDialog(
+                        title: 'Add Courses',
+                        content: Container(
+                          height: Get.height - 200,
+                          width: Get.width,
+                          padding: EdgeInsets.zero,
+                          margin: EdgeInsets.zero,
+                          color: Colors.white,
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: ((Get.height - 200) / 2) - 73,
+                                child: FirestoreListView(
+                                    // loadingBuilder: (context) => FlutterLogo(),
+                                    // emptyBuilder: (context) {
+                                    //   print('no courses');
+                                    //   return Center(
+                                    //     child: Text(
+                                    //       'No Courses',
+                                    //       style: TextStyle(
+                                    //           fontSize: 50, color: Colors.black),
+                                    //     ),
+                                    //   );
+                                    // },
+                                    query: DatabaseService.FranchiseCollection
+                                        .where('atc', isEqualTo: data['atc']),
+                                    itemBuilder: (context, doc) =>
+                                        ListView.builder(
+                                          shrinkWrap: true,
+                                          itemBuilder: (context, index) {
+                                            final item =
+                                                doc.data()['courses'][index];
+                                            return ListTile(
+                                              title: Text(item),
+                                              trailing: IconButton(
+                                                onPressed: () async =>
+                                                    controller
+                                                        .removeCourseFromList(
+                                                            item,
+                                                            doc.data()[
+                                                                'doc_id']),
+                                                icon: Icon(Icons.remove_circle),
+                                              ),
+                                            );
+                                          },
+                                          itemCount:
+                                              doc.data()['courses'].length,
+                                        )),
+                              ),
+                              Container(
+                                height: 1,
+                                width: Get.width,
+                                color: Colors.black,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 20),
+                                child: TextFormField(
+                                  decoration: InputDecoration(
+                                    hintText: 'Search for course..',
+                                  ),
+                                  onFieldSubmitted: (val) => controller
+                                      .searchCourseUsingGivenString(val),
+                                ),
+                              ),
+                              GetBuilder(
+                                  init: controller,
+                                  builder: (ctrl) {
+                                    return SizedBox(
+                                      height: ((Get.height - 200) / 2),
+                                      child: FirestoreListView(
+                                        shrinkWrap: true,
+                                        query: ctrl.state.allCourseQuery,
+                                        itemBuilder: (context, doc) =>
+                                            KCourseListViewItem(
+                                                doc.data()['course'],
+                                                ctrl,
+                                                data['doc_id']),
+                                      ),
+                                    );
+                                  }),
+                            ],
+                          ),
+                        ),
+                      ),
+                      child: Text('Edit Courses'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorConstants.blachish_clr,
+                        foregroundColor: Colors.white,
+                        fixedSize: Size(200, 50),
+
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (homectrl.state.editFormKey.currentState!
+                            .validate()) {
+                          try {
+                            await DatabaseService.FranchiseCollection.doc(
+                                    data['doc_id'])
+                                .update({
+                              'centre_name': homectrl.state.centre_name.text,
+                              'centre_head': homectrl.state.centre_head.text,
+                              'atc': homectrl.state.atc.text,
+                              'district': homectrl.state.district.text,
+                              'place': homectrl.state.place.text,
+                              'renewal': homectrl.state.renewal.text,
+                            }).then((value) => Navigator.of(context).pop());
+                          } catch (e) {
+                            print(e);
+                          }
+                        }
+                      },
+                      child: Text('Submit'),
+                      style: ElevatedButton.styleFrom(
+                          fixedSize: Size(Get.width, 50),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20))),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+        return false;
+      } else {
+        return data['isAdmin'] == 'false' ? true : false;
+      }
+    },
+    direction: data['isAdmin'] == 'false'
+        ? DismissDirection.horizontal
+        : DismissDirection.endToStart,
     child: Container(
       margin: EdgeInsets.symmetric(vertical: 10),
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -82,6 +300,8 @@ Widget FranchiseCard(var data, FranchisePageController controller) {
                                 BottomSheetItem(
                                     'Centre Head', data['centre_head']),
                                 BottomSheetItem('ATC', data['atc']),
+                                BottomSheetItem('Email', data['email']),
+                                BottomSheetItem('Password', data['password']),
                                 BottomSheetItem('District', data['district']),
                                 BottomSheetItem('Place', data['place']),
                                 BottomSheetItem('Renewal', data['renewal']),
@@ -221,6 +441,27 @@ Widget FranchiseCardItem(String title, String info, int index) {
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.end)),
       ],
+    ),
+  );
+}
+
+Widget EditCourseItem(String title) {
+  return ListTile(
+    title: Text(title),
+    trailing: IconButton(
+      onPressed: () {},
+      icon: Icon(Icons.remove_circle),
+    ),
+  );
+}
+
+Widget KCourseListViewItem(
+    String title, FranchisePageController controller, String doc_id) {
+  return ListTile(
+    title: Text(title),
+    trailing: IconButton(
+      onPressed: () async => controller.addCourseToList(title, doc_id),
+      icon: Icon(Icons.add_circle),
     ),
   );
 }

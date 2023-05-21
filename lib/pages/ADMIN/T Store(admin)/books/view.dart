@@ -8,7 +8,6 @@ import 'package:tssr_ctrl/widgets/optionsBar_tssr.dart';
 import 'package:tssr_ctrl/widgets/t_store_card_admin.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 
-
 class TBooksPage extends GetView<TBooksController> {
   const TBooksPage({super.key});
 
@@ -16,11 +15,13 @@ class TBooksPage extends GetView<TBooksController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar('T Store'),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(Icons.add, size: 40),
+        child: Icon(Icons.add),
+        onPressed: () async {
+          await controller.addCourse();
+        },
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
           SliverAppBar(
@@ -39,7 +40,7 @@ class TBooksPage extends GetView<TBooksController> {
           return FirestoreListView(
             query: controller.state.query.value,
             itemBuilder: (context, doc) {
-              return TStoreCardAdmin(doc.data());
+              return TStoreCardAdmin(context, doc.data());
             },
             pageSize: 5,
           );

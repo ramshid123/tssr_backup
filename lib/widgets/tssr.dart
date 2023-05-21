@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
 import 'package:intl/intl.dart';
-import 'package:tssr_ctrl/pages/ADMIN/TSSR%20Page/tssrpage_index.dart';
+import 'package:tssr_ctrl/pages/ADMIN/TSSR/TSSR%20View/tssrpage_index.dart';
+import 'package:tssr_ctrl/services/database_service.dart';
 
-Widget TssrCard(var data,  controller) {
+Widget TssrCard(var data, controller, BuildContext context) {
   final key = GlobalKey();
   return Dismissible(
     key: key,
@@ -21,10 +22,130 @@ Widget TssrCard(var data,  controller) {
         ],
       ),
     ),
-    onDismissed: (val) {
-      controller.deleteFromList(data);
+    secondaryBackground: Container(
+      color: Colors.blue,
+      child: Row(
+        children: [
+          Spacer(),
+          Icon(
+            Icons.edit,
+            size: 100,
+            color: Colors.white,
+          ),
+        ],
+      ),
+    ),
+    onDismissed: (val) async {
+      try {
+        await DatabaseService.tssrCollection.doc(data['doc_id']).delete();
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            duration: 10.seconds,
+            content: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Undo the delete',
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+                IconButton(
+                    color: Colors.white,
+                    onPressed: () async {
+                      await DatabaseService.tssrCollection
+                          .doc(data['doc_id'])
+                          .set({
+                        'doc_id': data['doc_id'],
+                        'name': data['name'],
+                        'reg_no': data['reg_no'],
+                        'result': data['result'],
+                        'course': data['course'],
+                        'duration': data['duration'],
+                        'study_centre': data['study_centre'],
+                        'exam_date': data['exam_date'],
+                        'grade': data['grade'],
+                      }).then((value) => ScaffoldMessenger.of(context)
+                              .hideCurrentSnackBar());
+                    },
+                    icon: Icon(Icons.undo))
+              ],
+            ),
+          ),
+        );
+      } catch (e) {
+        print(e);
+      }
     },
-    direction: DismissDirection.startToEnd,
+    confirmDismiss: (direction) async {
+      if (direction == DismissDirection.endToStart) {
+        final homectrl = TssrPageController();
+        await Get.bottomSheet(
+          Container(
+            padding: EdgeInsets.all(20),
+            height: Get.height * 0.75,
+            color: Color.fromRGBO(255, 255, 255, 1),
+            child: SingleChildScrollView(
+              child: Form(
+                key: homectrl.state.editFormKey,
+                child: Column(
+                  children: [
+                    EditBoxFormField('Name', homectrl.state.name, data['name']),
+                    EditBoxFormField(
+                        'Register No', homectrl.state.reg_no, data['reg_no']),
+                    EditBoxFormField(
+                        'Result', homectrl.state.result, data['result']),
+                    EditBoxFormField(
+                        'Course', homectrl.state.course, data['course']),
+                    EditBoxFormField(
+                        'Duration', homectrl.state.duration, data['duration']),
+                    EditBoxFormField('Study Centre',
+                        homectrl.state.study_centre, data['study_centre']),
+                    EditBoxFormField('Exam Date', homectrl.state.exam_date,
+                        data['exam_date']),
+                    EditBoxFormField(
+                        'Grade', homectrl.state.grade, data['grade']),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (homectrl.state.editFormKey.currentState!
+                            .validate()) {
+                          try {
+                            await DatabaseService.tssrCollection
+                                .doc(data['doc_id'])
+                                .update({
+                              'name': homectrl.state.name.text,
+                              'reg_no': homectrl.state.reg_no.text,
+                              'result': homectrl.state.result.text,
+                              'course': homectrl.state.course.text,
+                              'duration': homectrl.state.duration.text,
+                              'study_centre': homectrl.state.study_centre.text,
+                              'exam_date': homectrl.state.exam_date.text,
+                              'grade': homectrl.state.grade.text,
+                            }).then((value) => Navigator.of(context).pop());
+                          } catch (e) {
+                            print(e);
+                          }
+                        }
+                      },
+                      child: Text('Submit'),
+                      style: ElevatedButton.styleFrom(
+                          fixedSize: Size(Get.width, 50),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20))),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+        return false;
+      } else {
+        return true;
+      }
+    },
+    direction: DismissDirection.horizontal,
     child: Container(
       margin: EdgeInsets.symmetric(vertical: 10),
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -56,7 +177,10 @@ Widget TssrCard(var data,  controller) {
                   Text(data['result'],
                       style: TextStyle(
                           fontSize: 18,
-                          color: data['result'].toString().toLowerCase().contains('pass')
+                          color: data['result']
+                                  .toString()
+                                  .toLowerCase()
+                                  .contains('pass')
                               ? Colors.green
                               : Colors.red)),
                   IconButton(
@@ -88,7 +212,8 @@ Widget TssrCard(var data,  controller) {
                                         'Register No', data['reg_no']),
                                     BottomSheetItem('Result', data['result']),
                                     BottomSheetItem('Course', data['course']),
-                                    BottomSheetItem('Duration', data['duration']),
+                                    BottomSheetItem(
+                                        'Duration', data['duration']),
                                     BottomSheetItem(
                                         'Study Centre', data['study_centre']),
                                     BottomSheetItem(
@@ -228,5 +353,55 @@ Widget TssrCardItem(String title, String info, int index) {
                 textAlign: TextAlign.end)),
       ],
     ),
+  );
+}
+
+Widget EditBoxFormField(String hint, TextEditingController ctrl, String value) {
+  ctrl.text = value;
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      SizedBox(height: 20),
+      Text(
+        hint,
+        style: TextStyle(
+          fontSize: 20,
+          color: Colors.grey[600],
+        ),
+      ),
+      SizedBox(height: 5),
+      TextFormField(
+        controller: ctrl,
+        decoration: InputDecoration(
+            hintText: hint,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            suffixIcon: hint.toLowerCase().contains('date')
+                ? Builder(builder: (context) {
+                    return IconButton(
+                      onPressed: () async {
+                        final date = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2001),
+                          lastDate: DateTime(2050),
+                        );
+                        if (date != null) {
+                          ctrl.text =
+                              '${DateFormat.d().format(date)}/${DateFormat.M().format(date)}/${DateFormat.y().format(date)}';
+                        }
+                      },
+                      icon: Icon(Icons.date_range),
+                    );
+                  })
+                : null),
+        readOnly: hint.toLowerCase().contains('date') ? true : false,
+        validator: (val) {
+          return val == null || val.isEmpty ? 'Reqired' : null;
+        },
+      ),
+    ],
   );
 }

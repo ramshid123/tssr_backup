@@ -1,7 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.tssr_ctrl">
+    package="com.neptune.tssr">
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+   
    <application
-        android:label="tssr_ctrl"
+        android:label="TASC App"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <service

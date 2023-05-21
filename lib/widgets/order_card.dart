@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:tssr_ctrl/pages/ADMIN/T%20Store(admin)/orders/controller.dart';
+import 'package:tssr_ctrl/services/database_service.dart';
 import 'package:tssr_ctrl/widgets/tssc.dart';
 
 Widget TOrderCard(Map<String, dynamic> info, TOrdersController controller) {
@@ -95,18 +96,35 @@ Widget TOrderCard(Map<String, dynamic> info, TOrdersController controller) {
                   }),
                   Spacer(),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      try {
+                        await DatabaseService.OrderCollection.doc(
+                                info['doc_id'])
+                            .delete();
+                      } catch (e) {
+                        print(e);
+                      }
+                    },
                     child: Text('Cancel'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                     ),
                   ),
                   SizedBox(width: 5),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: Text('Accept'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                  Visibility(
+                    visible: info['accepted'] == 'false' ? true : false,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        try {
+                          await DatabaseService.OrderCollection.doc(
+                                  info['doc_id'])
+                              .update({'accepted': 'true'});
+                        } catch (e) {}
+                      },
+                      child: Text('Accept'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                      ),
                     ),
                   ),
                 ],
@@ -321,17 +339,36 @@ Widget bottomSheet(Map<String, dynamic> info) {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      try {
+                        await DatabaseService.OrderCollection.doc(
+                                info['doc_id'])
+                            .delete();
+                        Get.back();
+                      } catch (e) {
+                        print(e);
+                      }
+                    },
                     child: Text('Cancel'),
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red, fixedSize: Size(150, 40)),
                   ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: Text('Accept'),
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        fixedSize: Size(150, 40)),
+                  Visibility(
+                    visible: info['accepted'] == 'false' ? true : false,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        try {
+                          await DatabaseService.OrderCollection.doc(
+                                  info['doc_id'])
+                              .update({'accepted': 'true'});
+                          Get.back();
+                        } catch (e) {}
+                      },
+                      child: Text('Accept'),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          fixedSize: Size(150, 40)),
+                    ),
                   ),
                 ],
               ),
