@@ -21,6 +21,19 @@ class LoginPageController extends GetxController {
             await DatabaseService.FranchiseCollection.where('email',
                     isEqualTo: email.trim())
                 .get();
+        if (userInfoSnapshot.docs.length == 0) {
+          print('no user found');
+           Get.showSnackbar(
+            GetSnackBar(
+              title: 'No user found',
+              message:
+                  'Please check you email and password',
+              backgroundColor: Colors.red,
+              duration: 5.seconds,
+            ),
+          );
+          return;
+        }
         final userInfo = userInfoSnapshot.docs.single.data();
         final renewalDate = DateFormat("dd/MM/yyyy").parse(userInfo['renewal']);
 
@@ -28,12 +41,6 @@ class LoginPageController extends GetxController {
             DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
         if (renewalDate.isAfter(DateTime.now()) || renewalDate == currentDate) {
-          final List temp_courses = userInfo['courses'];
-
-          final courses = temp_courses.map((e) => e.toString()).toList();
-
-          await SF.setStringList(SharedPrefStrings.COURSES, courses);
-
           await SF.setBool(SharedPrefStrings.ISADMIN,
               userInfo['isAdmin'] == 'true' ? true : false);
           await SF.setString(

@@ -6,23 +6,12 @@ PreferredSizeWidget CustomAppBar(String title) {
     toolbarHeight: 75,
     backgroundColor: ColorConstants.blachish_clr,
     centerTitle: true,
-    title: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(
-          Icons.shopping_basket_sharp,
-          size: 30,
-          color: ColorConstants.greenish_clr,
-        ),
-        SizedBox(width: 10),
-        Text(
-          title,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 25,
-          ),
-        ),
-      ],
+    title: Text(
+      title,
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 25,
+      ),
     ),
     actions: [
       CircleAvatar(
@@ -37,23 +26,12 @@ PreferredSizeWidget CustomAppBarForTstore(String title) {
     toolbarHeight: 75,
     backgroundColor: ColorConstants.blachish_clr,
     centerTitle: true,
-    title: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(
-          Icons.shopping_basket_sharp,
-          size: 30,
-          color: ColorConstants.greenish_clr,
-        ),
-        SizedBox(width: 10),
-        Text(
-          title,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 25,
-          ),
-        ),
-      ],
+    title: Text(
+      title,
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 25,
+      ),
     ),
     actions: [
       CircleAvatar(

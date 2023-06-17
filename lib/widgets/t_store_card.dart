@@ -22,7 +22,7 @@ Widget TStoreCard(Map<String, dynamic> doc) {
         children: [
           Container(
             height: 100,
-            width: Get.width / 3 - 40,
+            width: Get.width / 6 - 40,
             decoration: BoxDecoration(
                 color: Colors.black,
                 borderRadius: BorderRadius.circular(20),
@@ -74,8 +74,7 @@ Widget TStoreCard(Map<String, dynamic> doc) {
                       ),
                     ),
                   ),
-                  SizedBox(width: 60),
-                  Icon(Icons.navigate_next_outlined)
+                 
                 ],
               ),
             ],

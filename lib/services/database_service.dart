@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
 
-class DatabaseService{
+class DatabaseService {
   static final db = FirebaseFirestore.instance;
 
   static final tssrCollection = db.collection('TSSR_Data');
@@ -11,4 +12,16 @@ class DatabaseService{
   static final OrderCollection = db.collection('Orders');
   static final CourseCollection = db.collection('Courses');
   static final StudentDetailsCollection = db.collection('StudentDetails');
+  static final ResultCollection = db.collection('Results');
+  static final DeletedAccounts = db.collection('Deleted_Accounts');
+
+  static Future<bool> checkInternetConnection() async {
+    try {
+      final response = await http
+          .get(Uri.parse('https://rickandmortyapi.com/api/character/5'));
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
 }

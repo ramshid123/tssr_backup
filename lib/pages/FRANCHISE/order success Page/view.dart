@@ -91,17 +91,17 @@ class OrderSuccessPage extends GetView<OrderSuccessController> {
                   opacity: controller.state.btn_op.value,
                   child: ElevatedButton(
                     onPressed: () => Get.offAllNamed(AppRouteNames.HOME_FR),
+                    style: ElevatedButton.styleFrom(
+                        fixedSize: Size(Get.width - 100, 60),
+                        backgroundColor: ColorConstants.blachish_clr,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20))),
                     child: Text(
                       'Back to Home',
                       style: TextStyle(
                         fontSize: 20,
                       ),
                     ),
-                    style: ElevatedButton.styleFrom(
-                        fixedSize: Size(Get.width - 100, 60),
-                        backgroundColor: ColorConstants.blachish_clr,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20))),
                   ),
                 ),
               )

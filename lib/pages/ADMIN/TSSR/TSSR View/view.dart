@@ -14,33 +14,48 @@ class TssrPage extends GetView<TssrPageController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: CustomAppBar('TSSR'),
-      body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          SliverAppBar(
-            flexibleSpace: OptionsBar(
-                context, controller, ['Name', 'name', 'Register No', 'reg_no']),
-            toolbarHeight: 170,
-            backgroundColor: Colors.white,
-            automaticallyImplyLeading: false,
-            pinned: false,
-            floating: true,
-            snap: true,
-            stretch: true,
-          ),
-        ],
-        body: Obx(() {
-          return FirestoreListView(
-            query: controller.state.query.value,
-            itemBuilder: (context, doc) {
-              return TssrCard(doc.data(), controller,context);
-            },
-            pageSize: 5,
-          );
-        }),
-      ),
-    );
+    return LayoutBuilder(builder: (context, constraints) {
+      bool isMobile = Get.width <= 768 ? true : false;
+      return Scaffold(
+        backgroundColor: Colors.grey[100],
+        appBar: isMobile ? CustomAppBar('TSSR') : null,
+        body: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            SliverAppBar(
+              flexibleSpace: OptionsBar(context, controller,
+                  ['Name', 'name', 'Register No', 'reg_no']),
+              toolbarHeight: 170,
+              backgroundColor: Colors.white,
+              automaticallyImplyLeading: false,
+              pinned: false,
+              floating: true,
+              snap: true,
+              stretch: true,
+            ),
+          ],
+          body: Obx(() {
+            return Padding(
+              padding: isMobile?EdgeInsets.zero:EdgeInsets.symmetric(horizontal: Get.width/20),
+              child: FirestoreListView(
+                query: controller.state.query.value,
+                emptyBuilder: (context) => Center(
+                  child: Text(
+                    'No Data',
+                    style: TextStyle(
+                      fontSize: 30,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ),
+                itemBuilder: (context, doc) {
+                  return TssrCard(doc.data(), controller, context);
+                },
+                pageSize: 5,
+              ),
+            );
+          }),
+        ),
+      );
+    });
   }
 }

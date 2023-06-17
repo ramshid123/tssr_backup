@@ -15,60 +15,78 @@ class ReportFranchisePage extends GetView<ReportFranchiseController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar('Report'),
-      body: SizedBox(
-        height: Get.height,
-        width: Get.width,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: 60),
-              Text(
-                'Report Services',
-                style: TextStyle(
-                  fontSize: 20,
-                ),
-              ),
-              SizedBox(height: 10),
-              Container(
-                height: 1,
-                width: 100,
-                color: ColorConstants.blachish_clr,
-              ),
-              SizedBox(height: 30),
-              Wrap(
-                alignment: WrapAlignment.center,
-                runSpacing: 20,
-                spacing: 20,
-                children: [
-                  ReportPageButton(
-                    'Student Details',
-                    controller,
-                    pgmd: pageMode.potrait,
-                    gdmd: GetDataMode.studentDetails,
+      body: LayoutBuilder(builder: (context, c) {
+        bool isMobile = Get.width <= 768 ? true : false;
+        return SizedBox(
+          height: Get.height,
+          width: Get.width,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: 60),
+                Text(
+                  'Report Services',
+                  style: TextStyle(
+                    fontSize: 20,
                   ),
-                  SizedBox(width: Get.width, height: 10),
-                ],
-              ),
-            ],
+                ),
+                SizedBox(height: 10),
+                Container(
+                  height: 1,
+                  width: 100,
+                  color: ColorConstants.blachish_clr,
+                ),
+                SizedBox(height: 30),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  runSpacing: 20,
+                  spacing: 20,
+                  children: [
+                    ReportPageButton(
+                      'Student Details',
+                      isMobile: isMobile,
+                      context: context,
+                      controller,
+                      pgmd: pageMode.potrait,
+                      gdmd: GetDataMode.studentDetails,
+                    ),
+                    SizedBox(width: Get.width, height: 10),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 }
 
 Widget ReportPageButton(String title, ReportFranchiseController controller,
-    {required pageMode pgmd, required GetDataMode gdmd}) {
+    {required pageMode pgmd,
+    required GetDataMode gdmd,
+    required bool isMobile,
+    required BuildContext context}) {
   return ElevatedButton(
     onPressed: () async {
       await PdfApi().generateDocument(
+          context: context,
+          controller: controller,
           orgName: controller.state.franchiseName!,
           pgMode: pgmd,
           dataMode: gdmd,
           isPPTC: false);
     },
+    style: ElevatedButton.styleFrom(
+      fixedSize: isMobile
+          ? Size(Get.width * 0.4, Get.width * 0.4)
+          : Size(Get.width * 0.2, Get.width * 0.2),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+    ),
     child: SizedBox(
-      width: Get.width * 0.4,
+      width: isMobile ? Get.width * 0.4 : Get.width * 0.2,
       child: Text(
         title,
         textAlign: TextAlign.center,
@@ -76,12 +94,6 @@ Widget ReportPageButton(String title, ReportFranchiseController controller,
           fontSize: 22,
           fontWeight: FontWeight.w400,
         ),
-      ),
-    ),
-    style: ElevatedButton.styleFrom(
-      fixedSize: Size(Get.width * 0.4, Get.width * 0.4),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
       ),
     ),
   );

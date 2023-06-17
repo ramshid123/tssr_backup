@@ -43,6 +43,8 @@ Widget FranchiseCard(
     onDismissed: (val) async {
       try {
         await DatabaseService.FranchiseCollection.doc(data['doc_id']).delete();
+        final deletedAccountId = await DatabaseService.DeletedAccounts.add(
+            {'email': data['email'], 'password': data['password']});
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -75,6 +77,7 @@ Widget FranchiseCard(
                         'uid': data['uid'],
                       }).then((value) => ScaffoldMessenger.of(context)
                               .hideCurrentSnackBar());
+                      deletedAccountId.delete();
                     },
                     icon: Icon(Icons.undo))
               ],
@@ -138,6 +141,16 @@ Widget FranchiseCard(
                                     // },
                                     query: DatabaseService.FranchiseCollection
                                         .where('atc', isEqualTo: data['atc']),
+                                    emptyBuilder: (context) => Center(
+                                          child: Text(
+                                            'No Data',
+                                            style: TextStyle(
+                                              fontSize: 30,
+                                              color: Colors.grey.shade600,
+                                            ),
+                                          ),
+                                        ),
+                                    pageSize: 10,
                                     itemBuilder: (context, doc) =>
                                         ListView.builder(
                                           shrinkWrap: true,
@@ -184,6 +197,16 @@ Widget FranchiseCard(
                                       child: FirestoreListView(
                                         shrinkWrap: true,
                                         query: ctrl.state.allCourseQuery,
+                                        pageSize: 10,
+                                        emptyBuilder: (context) => Center(
+                                          child: Text(
+                                            'No Data',
+                                            style: TextStyle(
+                                              fontSize: 30,
+                                              color: Colors.grey.shade600,
+                                            ),
+                                          ),
+                                        ),
                                         itemBuilder: (context, doc) =>
                                             KCourseListViewItem(
                                                 doc.data()['course'],
@@ -196,13 +219,12 @@ Widget FranchiseCard(
                           ),
                         ),
                       ),
-                      child: Text('Edit Courses'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: ColorConstants.blachish_clr,
                         foregroundColor: Colors.white,
                         fixedSize: Size(200, 50),
-
                       ),
+                      child: Text('Edit Courses'),
                     ),
                     SizedBox(height: 20),
                     ElevatedButton(
@@ -225,11 +247,11 @@ Widget FranchiseCard(
                           }
                         }
                       },
-                      child: Text('Submit'),
                       style: ElevatedButton.styleFrom(
                           fixedSize: Size(Get.width, 50),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20))),
+                      child: Text('Submit'),
                     ),
                   ],
                 ),

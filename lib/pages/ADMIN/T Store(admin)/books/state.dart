@@ -13,4 +13,6 @@ class TBooksState {
   var desc = TextEditingController();
   var name = TextEditingController();
   var price = TextEditingController();
+
+  var isLoading = false.obs;
 }

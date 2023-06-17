@@ -19,6 +19,17 @@ class StudentUploadController extends GetxController {
     // TODO: implement onReady
     super.onReady();
     final sf = await SharedPreferences.getInstance();
+
+    final userInfo = await DatabaseService.FranchiseCollection.where('atc',
+            isEqualTo: sf.getString(SharedPrefStrings.ATC))
+        .get();
+
+    final List temp_courses = userInfo.docs.first.data()['courses'];
+
+    final courses = temp_courses.map((e) => e.toString()).toList();
+
+    await sf.setStringList(SharedPrefStrings.COURSES, courses);
+
     state.availableCourses.value = sf
         .getStringList(SharedPrefStrings.COURSES)!
         .map((e) => e.toString())
@@ -28,48 +39,64 @@ class StudentUploadController extends GetxController {
   }
 
   Future selectAndUploadExcel() async {
-    String? excelInString = await ExcelToJson().convert();
     try {
       state.isLoading.value = true;
-      final data = StudentDetailModel.fromRawJson(excelInString.toString());
+      final isConnected = await DatabaseService.checkInternetConnection();
 
-      await getOtherDatasFromEnteredData(false);
+      String? excelInString = await ExcelToJson().convert();
+      if (isConnected) {
+        final data = StudentDetailModel.fromRawJson(excelInString.toString());
 
-      int maxSubListSize = 450;
+        await getOtherDatasFromEnteredData(false);
 
-      for (int i = 0; i < data.sheet1.length; i += maxSubListSize) {
-        int endIndex = (i + maxSubListSize < data.sheet1.length)
-            ? i + maxSubListSize
-            : data.sheet1.length;
-        List subList = data.sheet1.sublist(i, endIndex);
+        int maxSubListSize = 450;
 
-        final batch = DatabaseService.db.batch();
-        for (var item in subList) {
-          DocumentReference newDoc =
-              DatabaseService.StudentDetailsCollection.doc();
-          batch.set(newDoc, {
-            'uploader': AuthService.auth.currentUser!.uid,
-            'doc_id': newDoc.id,
-            'st_name': item.name,
-            'st_dob': item.dob,
-            'st_age': item.age,
-            'st_gender': item.gender,
-            'st_aadhaar': item.aadhaar,
-            'st_address': item.address,
-            'st_district': item.district,
-            'st_pincode': item.pincode,
-            'st_mobile_no': item.mobileNo,
-            'st_email': item.email,
-            'reg_no': item.regNo,
-            'study_centre': state.study_centre.text,
-            'place': state.place.text,
-            'district': state.district.text,
-            'course': item.course,
-            'date_of_admission': item.dateOfAdmission,
-            'date_of_course_start': item.dateOfCourseStart,
-          });
+        for (int i = 0; i < data.sheet1.length; i += maxSubListSize) {
+          int endIndex = (i + maxSubListSize < data.sheet1.length)
+              ? i + maxSubListSize
+              : data.sheet1.length;
+          List subList = data.sheet1.sublist(i, endIndex);
+
+          final batch = DatabaseService.db.batch();
+          for (var item in subList) {
+            DocumentReference newDoc =
+                DatabaseService.StudentDetailsCollection.doc();
+            batch.set(newDoc, {
+              'uploader': AuthService.auth.currentUser!.uid,
+              'doc_id': newDoc.id,
+              'st_name': item.name,
+              'st_dob': item.dob,
+              'st_age': item.age,
+              'st_gender': item.gender,
+              'st_aadhaar': item.aadhaar,
+              'st_address': item.address,
+              'st_district': item.district,
+              'st_pincode': item.pincode,
+              'st_mobile_no': item.mobileNo,
+              'st_email': item.email,
+              'reg_no': item.regNo,
+              'study_centre': state.study_centre.text,
+              'place': state.place.text,
+              'district': state.district.text,
+              'course': item.course,
+              'date_of_admission': item.dateOfAdmission,
+              'date_of_course_start': item.dateOfCourseStart,
+            });
+          }
+          await batch.commit().then((value) => Get.showSnackbar(GetSnackBar(
+                title: 'Data uploaded',
+                message: 'Data uploaded Successfully',
+                backgroundColor: Colors.green,
+                duration: 3.seconds,
+              )));
         }
-        await batch.commit().then((value) => print('success'));
+      } else {
+        Get.showSnackbar(GetSnackBar(
+          title: 'Network Error',
+          message: 'No stable internet connection detected',
+          backgroundColor: Colors.red,
+          duration: 3.seconds,
+        ));
       }
     } catch (e) {
       printError(info: e.toString());
@@ -92,36 +119,57 @@ class StudentUploadController extends GetxController {
         state.st_gender.text.isNotEmpty) {
       state.isLoading.value = true;
       try {
-        await getOtherDatasFromEnteredData(true);
-        DocumentReference newDoc =
-            DatabaseService.StudentDetailsCollection.doc();
-        await DatabaseService.StudentDetailsCollection.doc(newDoc.id).set({
-          'uploader': AuthService.auth.currentUser!.uid,
-          'doc_id': newDoc.id,
-          'st_name': state.st_name.text,
-          'st_dob': state.st_dob.text,
-          'st_age': state.st_age.text,
-          'st_gender': state.st_gender.text,
-          'st_aadhaar': state.st_aadhar.text,
-          'st_address': state.st_address.text,
-          'st_district': state.st_district.text,
-          'st_pincode': state.st_pincode.text,
-          'st_mobile_no': state.st_mobile_no.text,
-          'st_email': state.st_email.text,
-          'reg_no': state.reg_no.text,
-          'study_centre': state.study_centre.text,
-          'place': state.place.text,
-          'district': state.district.text,
-          'course': state.course.text,
-          'date_of_admission': state.date_of_admission.text,
-          'date_of_course_start': state.date_of_course_start.text,
-          // 'duration': state.duration.text,
-        }).then((value) {
-          clearAllFields();
-          print('success');
-        });
+        final isConnected = await DatabaseService.checkInternetConnection();
+        if (isConnected) {
+          await getOtherDatasFromEnteredData(true);
+          DocumentReference newDoc =
+              DatabaseService.StudentDetailsCollection.doc();
+          await DatabaseService.StudentDetailsCollection.doc(newDoc.id).set({
+            'uploader': AuthService.auth.currentUser!.uid,
+            'doc_id': newDoc.id,
+            'st_name': state.st_name.text,
+            'st_dob': state.st_dob.text,
+            'st_age': state.st_age.text,
+            'st_gender': state.st_gender.text,
+            'st_aadhaar': state.st_aadhar.text,
+            'st_address': state.st_address.text,
+            'st_district': state.st_district.text,
+            'st_pincode': state.st_pincode.text,
+            'st_mobile_no': state.st_mobile_no.text,
+            'st_email': state.st_email.text,
+            'reg_no': state.reg_no.text,
+            'study_centre': state.study_centre.text,
+            'place': state.place.text,
+            'district': state.district.text,
+            'course': state.course.text,
+            'date_of_admission': state.date_of_admission.text,
+            'date_of_course_start': state.date_of_course_start.text,
+            // 'duration': state.duration.text,
+          }).then((value) {
+            clearAllFields();
+            Get.showSnackbar(GetSnackBar(
+              title: 'Data uploaded',
+              message: 'Data uploaded Successfully',
+              backgroundColor: Colors.green,
+              duration: 3.seconds,
+            ));
+          });
+        } else {
+          Get.showSnackbar(GetSnackBar(
+            title: 'Network Error',
+            message: 'No stable internet connection detected',
+            backgroundColor: Colors.red,
+            duration: 3.seconds,
+          ));
+        }
       } catch (e) {
         print(e);
+        Get.showSnackbar(GetSnackBar(
+          title: 'Error',
+          message: 'Something went wrong.',
+          backgroundColor: Colors.red,
+          duration: 3.seconds,
+        ));
       } finally {
         state.isLoading.value = false;
       }

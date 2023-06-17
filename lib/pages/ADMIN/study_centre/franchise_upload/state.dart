@@ -20,6 +20,8 @@ class FranchiseUploadState {
   final place = TextEditingController();
   final renewal = TextEditingController();
 
+  var isLoading = false.obs;
+
   // var docIdOfFranchise = '';
   var allCourseQuery = DatabaseService.CourseCollection.orderBy('course');
 

@@ -12,33 +12,49 @@ class TsscUploadPageController extends GetxController {
   final state = TsscUploadPageState();
 
   Future selectAndUploadExcel() async {
-    String? excelInString = await ExcelToJson().convert();
     // print(excelInString);
     try {
       state.isLoading.value = true;
-      final data = TsscDataModel.fromRawJson(excelInString.toString());
+      final isConnected = await DatabaseService.checkInternetConnection();
+      if (isConnected) {
+        String? excelInString = await ExcelToJson().convert();
 
-      int maxSubListSize = 450;
+        final data = TsscDataModel.fromRawJson(excelInString.toString());
 
-      for (int i = 0; i < data.sheet1.length; i += maxSubListSize) {
-        int endIndex = (i + maxSubListSize < data.sheet1.length)
-            ? i + maxSubListSize
-            : data.sheet1.length;
-        List subList = data.sheet1.sublist(i, endIndex);
+        int maxSubListSize = 450;
 
-        final batch = DatabaseService.db.batch();
-        for (var item in subList) {
-          DocumentReference newDoc = DatabaseService.tsscCollection.doc();
-          batch.set(newDoc, {
-            'doc_id': newDoc.id,
-            'reg_no': item.regNo,
-            'name': item.name,
-            'skill': item.skill,
-            'skill_centre': item.skillCentre,
-            'exam_date': item.examDate,
-          });
+        for (int i = 0; i < data.sheet1.length; i += maxSubListSize) {
+          int endIndex = (i + maxSubListSize < data.sheet1.length)
+              ? i + maxSubListSize
+              : data.sheet1.length;
+          List subList = data.sheet1.sublist(i, endIndex);
+
+          final batch = DatabaseService.db.batch();
+          for (var item in subList) {
+            DocumentReference newDoc = DatabaseService.tsscCollection.doc();
+            batch.set(newDoc, {
+              'doc_id': newDoc.id,
+              'reg_no': item.regNo,
+              'name': item.name,
+              'skill': item.skill,
+              'skill_centre': item.skillCentre,
+              'exam_date': item.examDate,
+            });
+          }
+          await batch.commit().then((value) => Get.showSnackbar(GetSnackBar(
+                title: 'Data uploaded',
+                message: 'Data uploaded Successfully',
+                backgroundColor: Colors.green,
+                duration: 3.seconds,
+              )));
         }
-        await batch.commit().then((value) => print('success'));
+      } else {
+        Get.showSnackbar(GetSnackBar(
+          title: 'Network Error',
+          message: 'No stable internet connection detected',
+          backgroundColor: Colors.red,
+          duration: 3.seconds,
+        ));
       }
     } catch (e) {
       printError(info: e.toString());
@@ -59,23 +75,39 @@ class TsscUploadPageController extends GetxController {
     if (state.formkey.currentState!.validate()) {
       state.isLoading.value = true;
       try {
-        DocumentReference newDoc = DatabaseService.tsscCollection.doc();
-        await DatabaseService.tsscCollection.doc(newDoc.id).set({
-          'uploader':AuthService.auth.currentUser!.uid,
-          'doc_id': newDoc.id,
-          'reg_no': state.regNo.text,
-          'name': state.name.text,
-          'skill': state.skill.text,
-          'skill_centre': state.skill_centre.text,
-          'exam_date': state.examDate.text,
-        }).then((value) {
-          state.regNo.clear();
-          state.name.clear();
-          state.skill.clear();
-          state.skill_centre.clear();
-          state.examDate.clear();
-          print('success');
-        });
+        final isConnected = await DatabaseService.checkInternetConnection();
+
+        if (isConnected) {
+          DocumentReference newDoc = DatabaseService.tsscCollection.doc();
+          await DatabaseService.tsscCollection.doc(newDoc.id).set({
+            'uploader': AuthService.auth.currentUser!.uid,
+            'doc_id': newDoc.id,
+            'reg_no': state.regNo.text,
+            'name': state.name.text,
+            'skill': state.skill.text,
+            'skill_centre': state.skill_centre.text,
+            'exam_date': state.examDate.text,
+          }).then((value) {
+            state.regNo.clear();
+            state.name.clear();
+            state.skill.clear();
+            state.skill_centre.clear();
+            state.examDate.clear();
+            Get.showSnackbar(GetSnackBar(
+              title: 'Data uploaded',
+              message: 'Data uploaded Successfully',
+              backgroundColor: Colors.green,
+              duration: 3.seconds,
+            ));
+          });
+        } else {
+          Get.showSnackbar(GetSnackBar(
+            title: 'Network Error',
+            message: 'No stable internet connection detected',
+            backgroundColor: Colors.red,
+            duration: 3.seconds,
+          ));
+        }
       } catch (e) {
         print(e);
       } finally {

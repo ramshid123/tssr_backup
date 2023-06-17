@@ -20,11 +20,11 @@ Widget CustomDrawer(
                 SizedBox(height: 30),
                 CircleAvatar(
                   backgroundColor: Colors.white,
+                  radius: 35,
                   child: Icon(
                     Icons.person,
                     size: 35,
                   ),
-                  radius: 35,
                 ),
                 SizedBox(height: 20),
                 Text(
@@ -100,11 +100,11 @@ Widget DrawerItem(
               onPressed: () async {
                 await AuthService().logout();
               },
-              child: Text('Yes'),
               style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: ColorConstants.purple_clr,
                   side: BorderSide(color: ColorConstants.purple_clr)),
+              child: Text('Yes'),
             ),
             cancel:
                 ElevatedButton(onPressed: () => Get.back(), child: Text('No')),

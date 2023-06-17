@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:get/get.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
@@ -107,13 +106,13 @@ class HallTicketUploadPage extends GetView<HallTicketUploadController> {
                                         onPressed: () async {
                                           await controller.manualDataSubmit();
                                         },
-                                        child: Text('Submit'),
                                         style: ElevatedButton.styleFrom(
                                             fixedSize: Size(Get.width, 50),
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(
-                                                        10)))),
+                                                        10))),
+                                        child: Text('Submit')),
                                 SizedBox(height: 30),
                               ],
                             ),
@@ -142,16 +141,16 @@ class HallTicketUploadPage extends GetView<HallTicketUploadController> {
                                       onPressed: () async {
                                         await controller.selectAndUploadExcel();
                                       },
-                                      child: Text(
-                                        'Select and Upload',
-                                        style: TextStyle(
-                                            fontSize: 17, letterSpacing: 2),
-                                      ),
                                       style: ElevatedButton.styleFrom(
                                           fixedSize: Size(Get.width, 60),
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(20))),
+                                      child: Text(
+                                        'Select and Upload',
+                                        style: TextStyle(
+                                            fontSize: 17, letterSpacing: 2),
+                                      ),
                                     ),
                             ],
                           ),

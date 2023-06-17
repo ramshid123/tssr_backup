@@ -118,11 +118,11 @@ Widget TsscCard(var data, TsscPageController controller, BuildContext context) {
                           }
                         }
                       },
-                      child: Text('Submit'),
                       style: ElevatedButton.styleFrom(
                           fixedSize: Size(Get.width, 50),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20))),
+                      child: Text('Submit'),
                     ),
                   ],
                 ),

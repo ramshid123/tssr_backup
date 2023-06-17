@@ -11,4 +11,6 @@ class CoursesState {
   final formkey = GlobalKey<FormState>();
   final courseName = TextEditingController();
   final courseDuration = TextEditingController();
+
+  var isLoading = false.obs;
 }

@@ -12,35 +12,51 @@ class HallTicketUploadController extends GetxController {
   final state = HallTicketUploadState();
 
   Future selectAndUploadExcel() async {
-    String? excelInString = await ExcelToJson().convert();
     // print(excelInString);
     try {
       state.isLoading.value = true;
-      final data = HallTicketModel.fromRawJson(excelInString.toString());
+      final isConnected = await DatabaseService.checkInternetConnection();
+      String? excelInString = await ExcelToJson().convert();
 
-      int maxSubListSize = 450;
+      if (isConnected) {
+        final data = HallTicketModel.fromRawJson(excelInString.toString());
 
-      for (int i = 0; i < data.sheet1.length; i += maxSubListSize) {
-        int endIndex = (i + maxSubListSize < data.sheet1.length)
-            ? i + maxSubListSize
-            : data.sheet1.length;
-        List subList = data.sheet1.sublist(i, endIndex);
+        int maxSubListSize = 450;
 
-        final batch = DatabaseService.db.batch();
-        for (var item in subList) {
-          DocumentReference newDoc = DatabaseService.hallTKTCollection.doc();
-          batch.set(newDoc, {
-            'doc_id': newDoc.id,
-            'admission_no': item.admissionNo,
-            'name': item.name,
-            'course': item.course,
-            'study_centre': item.studyCentre,
-            'exam_centre': item.examCentre,
-            'exam_date': item.examDate,
-            'exam_time': item.examTime,
-          });
+        for (int i = 0; i < data.sheet1.length; i += maxSubListSize) {
+          int endIndex = (i + maxSubListSize < data.sheet1.length)
+              ? i + maxSubListSize
+              : data.sheet1.length;
+          List subList = data.sheet1.sublist(i, endIndex);
+
+          final batch = DatabaseService.db.batch();
+          for (var item in subList) {
+            DocumentReference newDoc = DatabaseService.hallTKTCollection.doc();
+            batch.set(newDoc, {
+              'doc_id': newDoc.id,
+              'admission_no': item.admissionNo,
+              'name': item.name,
+              'course': item.course,
+              'study_centre': item.studyCentre,
+              'exam_centre': item.examCentre,
+              'exam_date': item.examDate,
+              'exam_time': item.examTime,
+            });
+          }
+          await batch.commit().then((value) => Get.showSnackbar(GetSnackBar(
+                title: 'Data uploaded',
+                message: 'Data uploaded Successfully',
+                backgroundColor: Colors.green,
+                duration: 3.seconds,
+              )));
         }
-        await batch.commit().then((value) => print('success'));
+      } else {
+        Get.showSnackbar(GetSnackBar(
+          title: 'Network Error',
+          message: 'No stable internet connection detected',
+          backgroundColor: Colors.red,
+          duration: 3.seconds,
+        ));
       }
     } catch (e) {
       printError(info: e.toString());
@@ -61,27 +77,42 @@ class HallTicketUploadController extends GetxController {
     if (state.formkey.currentState!.validate()) {
       state.isLoading.value = true;
       try {
-        DocumentReference newDoc = DatabaseService.hallTKTCollection.doc();
-        await DatabaseService.hallTKTCollection.doc(newDoc.id).set({
-          'uploader': AuthService.auth.currentUser!.uid,
-          'doc_id': newDoc.id,
-          'admission_no': state.admission_no.text,
-          'name': state.name.text,
-          'course': state.course.text,
-          'study_centre': state.study_centre.text,
-          'exam_centre': state.exam_centre.text,
-          'exam_date': state.exam_date.text,
-          'exam_time': state.exam_time.text,
-        }).then((value) {
-          state.admission_no.clear();
-          state.name.clear();
-          state.course.clear();
-          state.study_centre.clear();
-          state.exam_centre.clear();
-          state.exam_date.clear();
-          state.exam_time.clear();
-          print('success');
-        });
+        final isConnected = await DatabaseService.checkInternetConnection();
+        if (isConnected) {
+          DocumentReference newDoc = DatabaseService.hallTKTCollection.doc();
+          await DatabaseService.hallTKTCollection.doc(newDoc.id).set({
+            'uploader': AuthService.auth.currentUser!.uid,
+            'doc_id': newDoc.id,
+            'admission_no': state.admission_no.text,
+            'name': state.name.text,
+            'course': state.course.text,
+            'study_centre': state.study_centre.text,
+            'exam_centre': state.exam_centre.text,
+            'exam_date': state.exam_date.text,
+            'exam_time': state.exam_time.text,
+          }).then((value) {
+            state.admission_no.clear();
+            state.name.clear();
+            state.course.clear();
+            state.study_centre.clear();
+            state.exam_centre.clear();
+            state.exam_date.clear();
+            state.exam_time.clear();
+            Get.showSnackbar(GetSnackBar(
+              title: 'Data uploaded',
+              message: 'Data uploaded Successfully',
+              backgroundColor: Colors.green,
+              duration: 3.seconds,
+            ));
+          });
+        } else {
+          Get.showSnackbar(GetSnackBar(
+            title: 'Network Error',
+            message: 'No stable internet connection detected',
+            backgroundColor: Colors.red,
+            duration: 3.seconds,
+          ));
+        }
       } catch (e) {
         print(e);
       } finally {

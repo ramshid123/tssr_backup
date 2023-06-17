@@ -18,6 +18,7 @@ class TestPage extends GetView<TestPageController> {
                 height: (Get.height / 2) - 73,
                 child: FirestoreListView(
                     loadingBuilder: (context) => FlutterLogo(),
+                    pageSize: 5,
                     emptyBuilder: (context) {
                       print('no courses');
                       return Center(

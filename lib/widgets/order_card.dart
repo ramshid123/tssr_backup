@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
@@ -83,7 +82,6 @@ Widget TOrderCard(Map<String, dynamic> info, TOrdersController controller) {
                             context: context,
                             builder: (context) => bottomSheet(info));
                       },
-                      child: Text('View'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: ColorConstants.purple_clr,
@@ -92,6 +90,7 @@ Widget TOrderCard(Map<String, dynamic> info, TOrdersController controller) {
                           width: 2,
                         ),
                       ),
+                      child: Text('View'),
                     );
                   }),
                   Spacer(),
@@ -105,10 +104,10 @@ Widget TOrderCard(Map<String, dynamic> info, TOrdersController controller) {
                         print(e);
                       }
                     },
-                    child: Text('Cancel'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                     ),
+                    child: Text('Cancel'),
                   ),
                   SizedBox(width: 5),
                   Visibility(
@@ -121,10 +120,10 @@ Widget TOrderCard(Map<String, dynamic> info, TOrdersController controller) {
                               .update({'accepted': 'true'});
                         } catch (e) {}
                       },
-                      child: Text('Accept'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
                       ),
+                      child: Text('Accept'),
                     ),
                   ),
                 ],
@@ -349,9 +348,9 @@ Widget bottomSheet(Map<String, dynamic> info) {
                         print(e);
                       }
                     },
-                    child: Text('Cancel'),
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red, fixedSize: Size(150, 40)),
+                    child: Text('Cancel'),
                   ),
                   Visibility(
                     visible: info['accepted'] == 'false' ? true : false,
@@ -364,10 +363,10 @@ Widget bottomSheet(Map<String, dynamic> info) {
                           Get.back();
                         } catch (e) {}
                       },
-                      child: Text('Accept'),
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green,
                           fixedSize: Size(150, 40)),
+                      child: Text('Accept'),
                     ),
                   ),
                 ],

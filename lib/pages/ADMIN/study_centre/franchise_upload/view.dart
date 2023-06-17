@@ -1,6 +1,5 @@
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:get/get.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
@@ -26,25 +25,32 @@ class FranchiseUploadPage extends GetView<FranchiseUploadController> {
               padding: EdgeInsets.only(top: 20),
               child: Row(
                 children: [
-                  ElevatedButton(
-                    onPressed: () async {
-                      await controller.manualSingleUpload();
-                    },
-                    child: Text(controller.state.currentStep.value == 2
-                        ? 'Continue'
-                        : 'Next'),
-                    style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        fixedSize: Size(100, 30)),
-                  ),
+                  Obx(() {
+                    return controller.state.isLoading.value
+                        ? SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: CircularProgressIndicator(),
+                          )
+                        : ElevatedButton(
+                            onPressed: () async {
+                              await controller.manualSingleUpload();
+                            },
+                            style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)),
+                                fixedSize: Size(100, 30)),
+                            child: Text(controller.state.currentStep.value == 2
+                                ? 'Continue'
+                                : 'Next'),
+                          );
+                  }),
                   SizedBox(width: 10),
                   controller.state.currentStep.value != 0
                       ? ElevatedButton(
                           onPressed: () async {
                             controller.previousButton();
                           },
-                          child: Text('Previous'),
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                               foregroundColor: ColorConstants.purple_clr,
@@ -54,6 +60,7 @@ class FranchiseUploadPage extends GetView<FranchiseUploadController> {
                                       color: ColorConstants.purple_clr,
                                       width: 2)),
                               fixedSize: Size(100, 30)),
+                          child: Text('Previous'),
                         )
                       : Container(),
                 ],
@@ -193,6 +200,16 @@ class FranchiseUploadPage extends GetView<FranchiseUploadController> {
                                         child: FirestoreListView(
                                           shrinkWrap: true,
                                           query: ctrl.state.allCourseQuery,
+                                          pageSize: 10,
+                                          emptyBuilder: (context) => Center(
+                                            child: Text(
+                                              'No Data',
+                                              style: TextStyle(
+                                                fontSize: 30,
+                                                color: Colors.grey.shade600,
+                                              ),
+                                            ),
+                                          ),
                                           itemBuilder: (context, doc) =>
                                               KCourseListViewItem(
                                                   doc.data()['course'], ctrl),

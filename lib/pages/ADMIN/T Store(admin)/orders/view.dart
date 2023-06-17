@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:get/get.dart';
 import 'package:tssr_ctrl/pages/ADMIN/T%20Store(admin)/orders/torders_index.dart';
@@ -13,41 +12,67 @@ class TOrdersPage extends GetView<TOrdersController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: CustomAppBar('TStore'),
-      body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          SliverAppBar(
-            flexibleSpace: OptionsBarForTstore(
-                context, controller, ['Name', 'buyer_name', 'Date', 'Epoch']),
-            toolbarHeight: 170,
-            backgroundColor: Colors.white,
-            automaticallyImplyLeading: false,
-            pinned: false,
-            floating: true,
-            snap: true,
-            stretch: true,
+    return LayoutBuilder(builder: (context, c) {
+      bool isMobile = Get.width <= 768 ? true : false;
+      return Scaffold(
+        backgroundColor: Colors.grey[100],
+        appBar: isMobile ? CustomAppBar('TStore') : null,
+        body: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            SliverAppBar(
+              flexibleSpace: OptionsBarForTstore(
+                  context, controller, ['Name', 'buyer_name', 'Date', 'Epoch']),
+              toolbarHeight: 60,
+              backgroundColor: Colors.white,
+              automaticallyImplyLeading: false,
+              pinned: false,
+              floating: true,
+              snap: true,
+              stretch: true,
+            ),
+          ],
+          body: Padding(
+            padding: isMobile
+                ? EdgeInsets.zero
+                : EdgeInsets.symmetric(horizontal: Get.width / 20),
+            child: Obx(() {
+              return controller.state.stepIndex.value == 0
+                  ? FirestoreListView(
+                      query: controller.state.inComingquery.value,
+                      emptyBuilder: (context) => Center(
+                        child: Text(
+                          'No InComing Orders',
+                          style: TextStyle(
+                            fontSize: 30,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ),
+                      itemBuilder: (context, doc) {
+                        return TOrderCard(doc.data(), controller);
+                      },
+                      pageSize: 5,
+                    )
+                  : FirestoreListView(
+                      query: controller.state.onGoingquery.value,
+                      emptyBuilder: (context) => Center(
+                        child: Text(
+                          'No OnGoing Orders',
+                          style: TextStyle(
+                            fontSize: 30,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ),
+                      itemBuilder: (context, doc) {
+                        return TOrderCard(doc.data(), controller);
+                      },
+                      pageSize: 5,
+                    );
+            }),
           ),
-        ],
-        body: Obx(() {
-          return controller.state.stepIndex.value == 0
-              ? FirestoreListView(
-                  query: controller.state.inComingquery.value,
-                  itemBuilder: (context, doc) {
-                    return TOrderCard(doc.data(), controller);
-                  },
-                  pageSize: 5,
-                )
-              : FirestoreListView(
-                  query: controller.state.onGoingquery.value,
-                  itemBuilder: (context, doc) {
-                    return TOrderCard(doc.data(), controller);
-                  },
-                  pageSize: 5,
-                );
-        }),
-      ),
-    );
+        ),
+      );
+    });
   }
 }

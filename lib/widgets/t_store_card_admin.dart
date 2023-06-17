@@ -112,11 +112,11 @@ Widget TStoreCardAdmin(BuildContext context, Map<String, dynamic> doc) {
                           }
                         }
                       },
-                      child: Text('Submit'),
                       style: ElevatedButton.styleFrom(
                           fixedSize: Size(Get.width, 50),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20))),
+                      child: Text('Submit'),
                     ),
                   ],
                 ),
@@ -141,13 +141,15 @@ Widget TStoreCardAdmin(BuildContext context, Map<String, dynamic> doc) {
             ),
           ),
           padding: EdgeInsets.all(20),
-          child: Column(
-            children: [
-              BottomSheetItem('Book', doc['name']),
-              BottomSheetItem('Course', doc['course']),
-              BottomSheetItem('Description', doc['desc']),
-              BottomSheetItem('Price', doc['price']),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                BottomSheetItem('Book', doc['name']),
+                BottomSheetItem('Course', doc['course']),
+                BottomSheetItem('Description', doc['desc']),
+                BottomSheetItem('Price', doc['price']),
+              ],
+            ),
           ),
         ));
       },
@@ -203,22 +205,16 @@ Widget TStoreCardAdmin(BuildContext context, Map<String, dynamic> doc) {
                   ),
                 ),
                 SizedBox(height: 10),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: Get.width / 3,
-                      child: Text(
-                        doc['price'],
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                SizedBox(
+                  width: Get.width / 3,
+                  child: Text(
+                    doc['price'],
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
                     ),
-                    SizedBox(width: 60),
-                    Icon(Icons.navigate_next_outlined)
-                  ],
+                  ),
                 ),
               ],
             )

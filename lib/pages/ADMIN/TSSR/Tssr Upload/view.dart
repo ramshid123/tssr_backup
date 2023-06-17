@@ -109,13 +109,13 @@ class TssrUploadPage extends GetView<TssrUploadPageController> {
                                         onPressed: () async {
                                           await controller.manualDataSubmit();
                                         },
-                                        child: Text('Submit'),
                                         style: ElevatedButton.styleFrom(
                                             fixedSize: Size(Get.width, 50),
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(
-                                                        10)))),
+                                                        10))),
+                                        child: Text('Submit')),
                                 SizedBox(height: 30),
                               ],
                             ),
@@ -144,16 +144,16 @@ class TssrUploadPage extends GetView<TssrUploadPageController> {
                                       onPressed: () async {
                                         await controller.selectAndUploadExcel();
                                       },
-                                      child: Text(
-                                        'Select and Upload',
-                                        style: TextStyle(
-                                            fontSize: 17, letterSpacing: 2),
-                                      ),
                                       style: ElevatedButton.styleFrom(
                                           fixedSize: Size(Get.width, 60),
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(20))),
+                                      child: Text(
+                                        'Select and Upload',
+                                        style: TextStyle(
+                                            fontSize: 17, letterSpacing: 2),
+                                      ),
                                     ),
                             ],
                           ),

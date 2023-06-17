@@ -57,10 +57,21 @@ class FranchiseUploadController extends GetxController {
             state.SelectedCourses.value.length >= 1 ? true : false;
         if (isCompletelyFilled) {
           print('finished');
-
           await creatingAccountBackend();
+        } else if (state.SelectedCourses.value.length == 0) {
+          Get.showSnackbar(GetSnackBar(
+            title: 'Course not selected',
+            message: 'Select atleast one course from the list.',
+            backgroundColor: Colors.red,
+            duration: 3.seconds,
+          ));
         } else {
-          print('Error: Not finished completely');
+          Get.showSnackbar(GetSnackBar(
+            title: 'Check again!',
+            message: 'You left something blank in the form.',
+            backgroundColor: Colors.red,
+            duration: 3.seconds,
+          ));
         }
     }
   }
@@ -97,40 +108,45 @@ class FranchiseUploadController extends GetxController {
 
   Future creatingAccountBackend() async {
     try {
-      final user = await AuthService.auth.createUserWithEmailAndPassword(
-          email: state.email.text.trim(), password: state.password.text.trim());
-      print(user.user!.uid);
+      state.isLoading.value = true;
+      final isConnected = await DatabaseService.checkInternetConnection();
+      if (isConnected) {
+        final user = await AuthService.auth.createUserWithEmailAndPassword(
+            email: state.email.text.trim(),
+            password: state.password.text.trim());
+        print(user.user!.uid);
 
-      final newDoc = DatabaseService.FranchiseCollection.doc();
-      await DatabaseService.FranchiseCollection.doc(newDoc.id).set({
-        'uploader': AuthService.auth.currentUser!.uid,
-        'uid': user.user!.uid,
-        'doc_id': newDoc.id,
-        'email': state.email.text,
-        'password': state.password.text,
-        'atc': state.atc.value.text,
-        'centre_head': state.centre_head.value.text,
-        'centre_name': state.centre_name.value.text,
-        'district': state.district.value.text,
-        'place': state.place.value.text,
-        'renewal': state.renewal.value.text,
-        'courses': state.SelectedCourses.value,
-        'isAdmin': 'false',
-      }).then((value) {
-        state.email.clear();
-        state.password.clear();
-        state.atc.clear();
-        state.centre_head.clear();
-        state.centre_name.clear();
-        state.district.clear();
-        state.place.clear();
-        state.renewal.clear();
+        final newDoc = DatabaseService.FranchiseCollection.doc();
+        await DatabaseService.FranchiseCollection.doc(newDoc.id).set({
+          'uploader': AuthService.auth.currentUser!.uid,
+          'uid': user.user!.uid,
+          'doc_id': newDoc.id,
+          'email': state.email.text,
+          'password': state.password.text,
+          'atc': state.atc.value.text,
+          'centre_head': state.centre_head.value.text,
+          'centre_name': state.centre_name.value.text,
+          'district': state.district.value.text,
+          'place': state.place.value.text,
+          'renewal': state.renewal.value.text,
+          'courses': state.SelectedCourses.value,
+          'isAdmin': 'false',
+        }).then((value) {
+          state.email.clear();
+          state.password.clear();
+          state.atc.clear();
+          state.centre_head.clear();
+          state.centre_name.clear();
+          state.district.clear();
+          state.place.clear();
+          state.renewal.clear();
 
-        state.courseList = [''];
-        state.courseLength.value = 1;
-        state.currentStep.value = 0;
-        print('done');
-      });
+          state.courseList = [''];
+          state.courseLength.value = 1;
+          state.currentStep.value = 0;
+          print('done');
+        });
+      }
     } on FirebaseAuthException catch (e) {
       if (e
           .toString()
@@ -163,6 +179,8 @@ class FranchiseUploadController extends GetxController {
       print(e);
     } catch (e) {
       print(e);
+    } finally {
+      state.isLoading.value = false;
     }
   }
 }

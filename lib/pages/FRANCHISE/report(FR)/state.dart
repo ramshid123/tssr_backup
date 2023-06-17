@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
-class ReportFranchiseState{
-
+class ReportFranchiseState {
   String? franchiseName;
+
+  var isLoading = false.obs;
 }

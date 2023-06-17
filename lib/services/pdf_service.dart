@@ -1,45 +1,105 @@
+import 'package:flutter/widgets.dart' as wd;
 import 'package:get/get.dart';
+import 'package:jsaver/jSaver.dart';
 import 'package:pdf/widgets.dart';
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:external_path/external_path.dart';
+import 'package:tssr_ctrl/pages/ADMIN/report_/controller.dart';
 import 'package:tssr_ctrl/services/database_service.dart';
+import 'package:flutter/material.dart' as material;
 
 import 'dart:io';
 
 import 'package:pdf/widgets.dart' as pw;
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class PdfApi {
   Future generateDocument({
     required String orgName,
+    required wd.BuildContext context,
+    required controller,
     required bool isPPTC,
     required pageMode pgMode,
     required GetDataMode dataMode,
   }) async {
-    final dataList = isPPTC
-        ? await getDataFromDBForPPTC(orgName: orgName, dataMode: dataMode)
-        : await getDataFromDB(orgName: orgName, dataMode: dataMode);
-    final doc = await createDocument(dataList, orgName, pgMode, dataMode);
-    await saveDocument(doc, orgName);
+    try {
+      controller.state.isLoading.value = true;
+      controller.update();
+      final isConnected = await DatabaseService.checkInternetConnection();
+      if (isConnected) {
+        final dataList = isPPTC
+            ? await getDataFromDBForPPTC(orgName: orgName, dataMode: dataMode)
+            : await getDataFromDB(orgName: orgName, dataMode: dataMode);
+        final doc = await createDocument(dataList, orgName, pgMode, dataMode);
+        await saveDocument(doc, orgName, context);
+      } else {
+        if (orgName.isEmpty)
+          Get.back();
+        else {
+          Get.back();
+          Get.back();
+        }
+        showSnackBar(
+            context: context,
+            isError: true,
+            title: 'Network Error',
+            subtitle: 'No stable internet connection detected');
+      }
+    } catch (e) {
+      if (orgName.isEmpty)
+        Get.back();
+      else {
+        Get.back();
+        Get.back();
+      }
+      showSnackBar(
+          context: context,
+          isError: true,
+          title: 'Error',
+          subtitle: 'Something went wrong');
+    } finally {
+      controller.state.isLoading.value = false;
+      controller.update();
+    }
   }
 
-  Future saveDocument(Document doc, String orgName) async {
-    var status = await Permission.storage.request();
-    if (status.isDenied) {
-      Get.defaultDialog(
-        title: 'Storage permission required!',
-        middleText:
-            'The permission for storage is manditory for saving the pdf files to the local storage',
-      );
-    } else {
+  Future saveDocument(
+      Document doc, String orgName, material.BuildContext context) async {
+    if (kIsWeb) {
       final bytes = await doc.save();
-      final dir = await ExternalPath.getExternalStoragePublicDirectory(
-          ExternalPath.DIRECTORY_DOWNLOADS);
-      final file =
-          File('${dir}/${orgName.isEmpty ? "All_Centre" : orgName}.pdf');
-      await file.writeAsBytes(bytes);
-      print('done');
+      final s = await JSaver.instance.saveFromData(
+          data: bytes, name: 'test.pdf', type: JSaverFileType.PDF);
+    } else {
+      var status = await Permission.storage.request();
+      if (status.isDenied) {
+        Get.defaultDialog(
+          title: 'Storage permission required!',
+          middleText:
+              'The permission for storage is manditory for saving the pdf files to the local storage',
+        );
+      } else {
+        final bytes = await doc.save();
+        final dir = await ExternalPath.getExternalStoragePublicDirectory(
+            ExternalPath.DIRECTORY_DOWNLOADS);
+
+        final file =
+            File('${dir}/${orgName.isEmpty ? "All_Centre" : orgName}.pdf');
+        await file.writeAsBytes(bytes);
+        // print('done');
+        showSnackBar(
+            context: context,
+            isError: false,
+            title: 'Success',
+            subtitle: 'PDF saved to Downloads');
+        if (orgName.isEmpty)
+          Get.back();
+        else {
+          Get.back();
+          Get.back();
+        }
+      }
     }
   }
 
@@ -171,6 +231,38 @@ class PdfApi {
 
     return doc;
   }
+}
+
+void showSnackBar({
+  required material.BuildContext context,
+  required bool isError,
+  required String title,
+  required String subtitle,
+}) {
+  material.ScaffoldMessenger.of(context).showSnackBar(
+    material.SnackBar(
+        duration: 5.seconds,
+        backgroundColor: isError ? material.Colors.red : material.Colors.green,
+        content: material.Column(
+          children: [
+            material.Text(
+              title,
+              style: material.TextStyle(
+                color: material.Colors.white,
+                fontWeight: material.FontWeight.bold,
+              ),
+            ),
+            material.SizedBox(height: 5),
+            material.Text(
+              subtitle,
+              style: material.TextStyle(
+                color: material.Colors.white,
+                fontWeight: material.FontWeight.bold,
+              ),
+            ),
+          ],
+        )),
+  );
 }
 
 enum pageMode { potrait, landscape }

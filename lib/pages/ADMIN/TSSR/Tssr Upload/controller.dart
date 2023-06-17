@@ -12,35 +12,50 @@ class TssrUploadPageController extends GetxController {
   final state = TssrUploadPageState();
 
   Future selectAndUploadExcel() async {
-    String? excelInString = await ExcelToJson().convert();
     try {
       state.isLoading.value = true;
-      final data = TssrDataModel.fromRawJson(excelInString.toString());
+      final isConnected = await DatabaseService.checkInternetConnection();
+      String? excelInString = await ExcelToJson().convert();
+      if (isConnected) {
+        final data = TssrDataModel.fromRawJson(excelInString.toString());
 
-      int maxSubListSize = 450;
+        int maxSubListSize = 450;
 
-      for (int i = 0; i < data.sheet1.length; i += maxSubListSize) {
-        int endIndex = (i + maxSubListSize < data.sheet1.length)
-            ? i + maxSubListSize
-            : data.sheet1.length;
-        List subList = data.sheet1.sublist(i, endIndex);
+        for (int i = 0; i < data.sheet1.length; i += maxSubListSize) {
+          int endIndex = (i + maxSubListSize < data.sheet1.length)
+              ? i + maxSubListSize
+              : data.sheet1.length;
+          List subList = data.sheet1.sublist(i, endIndex);
 
-        final batch = DatabaseService.db.batch();
-        for (var item in subList) {
-          DocumentReference newDoc = DatabaseService.tssrCollection.doc();
-          batch.set(newDoc, {
-            'doc_id': newDoc.id,
-            'reg_no': item.registerNo,
-            'name': item.name,
-            'course': item.course,
-            'duration': item.duration,
-            'study_centre': item.studyCentre,
-            'exam_date': item.examDate,
-            'result': item.result,
-            'grade': item.grade,
-          });
+          final batch = DatabaseService.db.batch();
+          for (var item in subList) {
+            DocumentReference newDoc = DatabaseService.tssrCollection.doc();
+            batch.set(newDoc, {
+              'doc_id': newDoc.id,
+              'reg_no': item.registerNo,
+              'name': item.name,
+              'course': item.course,
+              'duration': item.duration,
+              'study_centre': item.studyCentre,
+              'exam_date': item.examDate,
+              'result': item.result,
+              'grade': item.grade,
+            });
+          }
+          await batch.commit().then((value) => Get.showSnackbar(GetSnackBar(
+                title: 'Data uploaded',
+                message: 'Data uploaded Successfully',
+                backgroundColor: Colors.green,
+                duration: 3.seconds,
+              )));
         }
-        await batch.commit().then((value) => print('success'));
+      } else {
+        Get.showSnackbar(GetSnackBar(
+          title: 'Network Error',
+          message: 'No stable internet connection detected',
+          backgroundColor: Colors.red,
+          duration: 3.seconds,
+        ));
       }
     } catch (e) {
       printError(info: e.toString());
@@ -61,31 +76,52 @@ class TssrUploadPageController extends GetxController {
     if (state.formkey.currentState!.validate()) {
       state.isLoading.value = true;
       try {
-        DocumentReference newDoc = DatabaseService.tssrCollection.doc();
-        await DatabaseService.tssrCollection.doc(newDoc.id).set({
-          'uploader':AuthService.auth.currentUser!.uid,
-          'doc_id': newDoc.id,
-          'reg_no': state.regNo.text,
-          'name': state.name.text,
-          'course': state.course.text,
-          'duration': state.duration.text,
-          'study_centre': state.studyCentre.text,
-          'exam_date': state.examDate.text,
-          'result': state.result.text,
-          'grade': state.grade.text,
-        }).then((value) {
-          state.regNo.clear();
-          state.name.clear();
-          state.course.clear();
-          state.duration.clear();
-          state.studyCentre.clear();
-          state.examDate.clear();
-          state.result.clear();
-          state.grade.clear();
-          print('success');
-        });
+        final isConnected = await DatabaseService.checkInternetConnection();
+        if (isConnected) {
+          DocumentReference newDoc = DatabaseService.tssrCollection.doc();
+          await DatabaseService.tssrCollection.doc(newDoc.id).set({
+            'uploader': AuthService.auth.currentUser!.uid,
+            'doc_id': newDoc.id,
+            'reg_no': state.regNo.text,
+            'name': state.name.text,
+            'course': state.course.text,
+            'duration': state.duration.text,
+            'study_centre': state.studyCentre.text,
+            'exam_date': state.examDate.text,
+            'result': state.result.text,
+            'grade': state.grade.text,
+          }).then((value) {
+            state.regNo.clear();
+            state.name.clear();
+            state.course.clear();
+            state.duration.clear();
+            state.studyCentre.clear();
+            state.examDate.clear();
+            state.result.clear();
+            state.grade.clear();
+            Get.showSnackbar(GetSnackBar(
+              title: 'Data uploaded',
+              message: 'Data uploaded Successfully',
+              backgroundColor: Colors.green,
+              duration: 3.seconds,
+            ));
+          });
+        } else {
+          Get.showSnackbar(GetSnackBar(
+            title: 'Network Error',
+            message: 'No stable internet connection detected',
+            backgroundColor: Colors.red,
+            duration: 3.seconds,
+          ));
+        }
       } catch (e) {
         print(e);
+        Get.showSnackbar(GetSnackBar(
+          title: 'Error',
+          message: 'Something went wrong.',
+          backgroundColor: Colors.red,
+          duration: 3.seconds,
+        ));
       } finally {
         state.isLoading.value = false;
       }

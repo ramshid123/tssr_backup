@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:get/get.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
@@ -81,11 +80,13 @@ class ProfilePage extends GetView<ProfileController> {
                           radius: 100,
                           backgroundColor: ColorConstants.blachish_clr,
                           child: CircleAvatar(
-                            radius: 80,
-                            backgroundColor: Colors.white,
-                            child: Icon(Icons.person,
-                                size: 80, color: ColorConstants.blachish_clr),
-                          ),
+                              radius: 80,
+                              backgroundColor: Colors.white,
+                              child: Image.asset(
+                                'assets/ic_launcher.png',
+                                width: 160,
+                                height: 160,
+                              )),
                         ),
                       ),
                       SizedBox(height: 20),

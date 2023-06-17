@@ -8,15 +8,20 @@ import 'package:tssr_ctrl/pages/ADMIN/report_/report_view.dart';
 import 'package:tssr_ctrl/pages/ADMIN/study_centre/franchise_upload/franchiseupload_index.dart';
 import 'package:tssr_ctrl/pages/ADMIN/TSSR/hall%20tkt%20View/hallticketpage_index.dart';
 import 'package:tssr_ctrl/pages/ADMIN/TSSR/hall%20tkt%20upload/hallticketupload_index.dart';
+import 'package:tssr_ctrl/pages/ADMIN/report_/reportadminpage_index.dart';
 import 'package:tssr_ctrl/pages/ADMIN/home_page/homepage_index.dart';
 import 'package:tssr_ctrl/pages/ADMIN/study_centre/study_centre_view.dart';
 import 'package:tssr_ctrl/pages/FRANCHISE/T%20Store%20item%20page/tstoreitempage_index.dart';
 import 'package:tssr_ctrl/pages/FRANCHISE/T%20store%20page/tstorepage_index.dart';
+import 'package:tssr_ctrl/pages/ADMIN/TSSR/result View/resultview_index.dart';
 import 'package:tssr_ctrl/pages/FRANCHISE/home(FR)/homefr_index.dart';
+import 'package:tssr_ctrl/pages/FRANCHISE/my_courses/mycourses_index.dart';
 import 'package:tssr_ctrl/pages/FRANCHISE/order%20success%20Page/ordersuccess_index.dart';
 import 'package:tssr_ctrl/pages/FRANCHISE/report(FR)/reportfranchise_index.dart';
 import 'package:tssr_ctrl/pages/FRANCHISE/student_upload/studentupload_index.dart';
 import 'package:tssr_ctrl/pages/profile/profile_index.dart';
+import 'package:tssr_ctrl/pages/ADMIN/TSSR/result upload/resultupload_index.dart';
+import 'package:tssr_ctrl/pages/splash_screen/splash_screen.dart';
 import 'package:tssr_ctrl/test.dart';
 import 'package:tssr_ctrl/test_page/testpage_index.dart';
 import 'names.dart';
@@ -61,6 +66,11 @@ class AppRoutes {
       name: AppRouteNames.TSSC_ADMIN,
       page: () => TsscPage(),
       binding: TsscPageBinding(),
+    ),
+    GetPage(
+      name: AppRouteNames.MY_COURSES_PAGE,
+      page: () => MyCoursesPage(),
+      binding: MyCoursesBinding(),
     ),
     GetPage(
       name: AppRouteNames.HALL_TICKET_UPLOAD,
@@ -126,7 +136,8 @@ class AppRoutes {
     ),
     GetPage(
       name: AppRouteNames.REPORT_HOME_PAGE,
-      page: () => ReportHomePage(),
+      page: () => ReportAdminPage(),
+      binding: ReportAdminPageBinding(),
     ),
     GetPage(
       name: AppRouteNames.STUDY_CENTRE_HOME_PAGE,
@@ -166,6 +177,20 @@ class AppRoutes {
       name: AppRouteNames.TEST_PAGE,
       page: () => TestPage(),
       binding: TestPageBinding(),
+    ),
+    GetPage(
+      name: AppRouteNames.RESULT_UPLOAD,
+      page: () => ResultUploadPage(),
+      binding: ResultUploadBinding(),
+    ),
+    GetPage(
+      name: AppRouteNames.RESULT_VIEW,
+      page: () => ResultViewPage(),
+      binding: ResultViewBinding(),
+    ),
+    GetPage(
+      name: AppRouteNames.SPLASH_SCREEN,
+      page: () => SplashScreen(),
     ),
   ];
 }

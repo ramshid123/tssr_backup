@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tssr_ctrl/services/database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,7 +14,7 @@ class FranchisePageController extends GetxController {
     super.onReady();
     //
     state.query.value =
-        DatabaseService.FranchiseCollection.orderBy('centre_name').where('');
+        DatabaseService.FranchiseCollection.orderBy('centre_name');
     // update();
   }
 
@@ -29,6 +30,7 @@ class FranchisePageController extends GetxController {
         DatabaseService.FranchiseCollection.orderBy('centre_name')
             .where('centre_name', isGreaterThanOrEqualTo: '$searchString')
             .where('centre_name', isLessThanOrEqualTo: '$searchString\uf8ff');
+
     // .where('reg_no', isEqualTo: '$searchString')
     // .where('reg_no', isEqualTo: '$searchString\uf8ff');
   }
@@ -65,5 +67,32 @@ class FranchisePageController extends GetxController {
         .where('course', isGreaterThanOrEqualTo: '$searchString')
         .where('course', isLessThanOrEqualTo: '$searchString\uf8ff');
     update();
+  }
+
+  Future deleteAll() async {
+    int maxSubListSize = 400;
+
+    final dataSnapshot = await DatabaseService.FranchiseCollection.get();
+
+    for (int i = 0; i < dataSnapshot.docs.length; i += maxSubListSize) {
+      int endIndex = (i + maxSubListSize < dataSnapshot.docs.length)
+          ? i + maxSubListSize
+          : dataSnapshot.docs.length;
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> subList =
+          dataSnapshot.docs.sublist(i, endIndex);
+
+      final batch = DatabaseService.db.batch();
+
+      for (int i = 0; i < subList.length; i++) {
+        batch.delete(subList[i].reference);
+      }
+      await batch.commit();
+    }
+    Get.showSnackbar(GetSnackBar(
+      title: 'Deleted',
+      message: 'All Data Deleted',
+      backgroundColor: Colors.green,
+      duration: 5.seconds,
+    ));
   }
 }

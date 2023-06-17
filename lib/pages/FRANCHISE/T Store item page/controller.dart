@@ -65,6 +65,7 @@ class TStoreItemPageController extends GetxController {
       final info = Get.arguments;
       final newDoc = DatabaseService.OrderCollection.doc();
       await DatabaseService.OrderCollection.doc(newDoc.id).set({
+        'accepted':'false',
         'doc_id': newDoc.id,
         'book': info['name'],
         'course': info['course'],
