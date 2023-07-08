@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
 import 'package:intl/intl.dart';
-import 'package:tssr_ctrl/pages/ADMIN/TSSR/TSSR%20View/tssrpage_index.dart';
+import 'package:tssr_ctrl/pages/FRANCHISE/student_view/sslc_view.dart';
+import 'package:tssr_ctrl/services/database_service.dart';
+import 'package:tssr_ctrl/services/storage_service.dart';
 
-Widget StudentCard(var data, controller) {
+Widget StudentCard(var data, controller, BuildContext context) {
   final key = GlobalKey();
   return Dismissible(
     key: key,
@@ -21,8 +23,72 @@ Widget StudentCard(var data, controller) {
         ],
       ),
     ),
-    onDismissed: (val) {
-      controller.deleteFromList(data);
+    onDismissed: (val) async {
+      try {
+        await DatabaseService.StudentDetailsCollection.doc(data['doc_id'])
+            .delete();
+        var isDeleteConfirm = true;
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            duration: 10.seconds,
+            content: GestureDetector(
+              onTap: () async {
+                await DatabaseService.StudentDetailsCollection.doc(
+                        data['doc_id'])
+                    .set({
+                  'doc_id': data['doc_id'],
+                  'course': data['course'],
+                  'date_of_admission': data['date_of_admission'],
+                  'date_of_course_start': data['date_of_course_start'],
+                  'district': data['district'],
+                  'parent_name': data['parent_name'],
+                  'photo_url': data['photo_url'],
+                  'place': data['place'],
+                  'reg_no': data['reg_no'],
+                  'sslc_url': data['sslc_url'],
+                  'st_aadhaar': data['st_aadhaar'],
+                  'st_address': data['st_address'],
+                  'st_age': data['st_age'],
+                  'st_district': data['st_district'],
+                  'st_dob': data['st_dob'],
+                  'st_email': data['st_email'],
+                  'st_gender': data['st_gender'],
+                  'st_mobile_no': data['st_mobile_no'],
+                  'st_name': data['st_name'],
+                  'st_pincode': data['st_pincode'],
+                  'study_centre': data['study_centre'],
+                  'uploader': data['uploader'],
+                }).then((value) {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  isDeleteConfirm = false;
+                });
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Undo the delete',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                  Icon(Icons.undo, color: Colors.white).paddingAll(10),
+                ],
+              ),
+            ),
+          ),
+        );
+        await Future.delayed(10.seconds);
+        if (isDeleteConfirm) {
+          await StorageService().instance.refFromURL(data['sslc_url']).delete();
+          await StorageService()
+              .instance
+              .refFromURL(data['photo_url'])
+              .delete();
+        }
+      } catch (e) {
+        print(e);
+      }
     },
     direction: DismissDirection.startToEnd,
     child: Container(
@@ -75,23 +141,56 @@ Widget StudentCard(var data, controller) {
                                   ),
                                 ),
                                 SizedBox(height: 20),
+                                data['photo_url'] != 'none'
+                                    ? Image.network(
+                                        data['photo_url'],
+                                        width: 200,
+                                        fit: BoxFit.contain,
+                                      )
+                                    : ElevatedButton(
+                                        onPressed: () async => await controller
+                                            .selectAndUploadPhoto(
+                                          reg_no: data['reg_no'],
+                                          doc_id: data['doc_id'],
+                                          type: 'Photo',
+                                        ),
+                                        child: Text('Upload Photo'),
+                                      ),
+                                SizedBox(height: 10),
+                                data['sslc_url'] != 'none'
+                                    ? ElevatedButton(
+                                        onPressed: () async => await Get.to(
+                                            SSLCPage(
+                                                imageUrl: data['sslc_url'])),
+                                        child: Text('View SSLC'))
+                                    : ElevatedButton(
+                                        onPressed: () async => await controller
+                                                .selectAndUploadPhoto(
+                                              reg_no: data['reg_no'],
+                                              doc_id: data['doc_id'],
+                                              type: 'SSLC',
+                                            ),
+                                        child: Text('Upload SSLC photo')),
+                                SizedBox(height: 10),
                                 BottomSheetItem('Name', data['st_name']),
-                                BottomSheetItem(
-                                    'Register No', data['reg_no']),
+                                BottomSheetItem('Register No', data['reg_no']),
                                 BottomSheetItem('DoB', data['st_dob']),
+                                BottomSheetItem(
+                                    'Parent name', data['parent_name']),
                                 BottomSheetItem('Age', data['st_age']),
-                                BottomSheetItem(
-                                    'Gender', data['st_gender']),
-                                BottomSheetItem(
-                                    'Aadhaar', data['st_aadhaar']),
+                                BottomSheetItem('Gender', data['st_gender']),
+                                BottomSheetItem('Aadhaar', data['st_aadhaar']),
                                 BottomSheetItem(
                                     'District', data['st_district']),
                                 BottomSheetItem('Pincode', data['st_pincode']),
-                                BottomSheetItem('Mobile No', data['st_mobile_no']),
+                                BottomSheetItem(
+                                    'Mobile No', data['st_mobile_no']),
                                 BottomSheetItem('Email', data['st_email']),
                                 BottomSheetItem('Course', data['course']),
-                                BottomSheetItem('Date of admission', data['date_of_admission']),
-                                BottomSheetItem('Date of course start', data['date_of_course_start']),
+                                BottomSheetItem('Date of admission',
+                                    data['date_of_admission']),
+                                BottomSheetItem('Course batch',
+                                    data['date_of_course_start']),
                               ],
                             ),
                           ),

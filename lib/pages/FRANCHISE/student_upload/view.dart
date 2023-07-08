@@ -1,9 +1,11 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:get/get.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
 import 'package:tssr_ctrl/pages/FRANCHISE/student_upload/controller.dart';
+import 'package:tssr_ctrl/services/excel_service.dart';
 import 'package:tssr_ctrl/widgets/app_bar.dart';
 import 'package:tssr_ctrl/widgets/tssc.dart';
 import 'package:dropdown_search/dropdown_search.dart';
@@ -72,10 +74,10 @@ class StudentUpload extends GetView<StudentUploadController> {
                                 CustomTextForm(
                                     hintText: 'Name',
                                     ctrl: controller.state.st_name),
-                                SizedBox(height: 30),
-                                CustomTextForm(
-                                    hintText: 'Register No',
-                                    ctrl: controller.state.reg_no),
+                                // SizedBox(height: 30),
+                                // CustomTextForm(
+                                //     hintText: 'Register No',
+                                //     ctrl: controller.state.reg_no),
                                 SizedBox(height: 30),
                                 CustomTextForm(
                                     hintText: 'Date of Birth',
@@ -86,12 +88,17 @@ class StudentUpload extends GetView<StudentUploadController> {
                                     controller.state.st_gender), //   Gender
                                 SizedBox(height: 30),
                                 CustomTextForm(
+                                    hintText: 'Parent name',
+                                    ctrl: controller.state.parent_name),
+                                SizedBox(height: 30),
+                                CustomTextForm(
                                     hintText: 'Aadhaar Number',
                                     ctrl: controller.state.st_aadhar),
                                 SizedBox(height: 30),
                                 CustomTextForm(
                                     hintText: 'Address',
                                     ctrl: controller.state.st_address),
+
                                 SizedBox(height: 30),
                                 DropDownListWidget(
                                     controller.state.districts,
@@ -120,15 +127,44 @@ class StudentUpload extends GetView<StudentUploadController> {
                                 CustomTextForm(
                                     hintText: 'Date of Admission',
                                     context: context,
-                                    ctrl: controller
-                                        .state.date_of_admission), //// Date of admission
+                                    ctrl: controller.state
+                                        .date_of_admission), //// Date of admission
 
                                 SizedBox(height: 30),
-                                CustomTextForm(
-                                    hintText: 'Course Starting Date',
-                                    context: context,
-                                    ctrl: controller
-                                        .state.date_of_course_start), //// course start date
+                                DropDownListWidget(
+                                    controller.state.batches,
+                                    controller.state.date_of_course_start,
+                                    'Course batch'),
+                                SizedBox(height: 30),
+                                kPhotoSelectionButton(
+                                    buttonText: 'Select profile photo',
+                                    file: controller.state.photo_path),
+                                SizedBox(height: 30),
+                                kPhotoSelectionButton(
+                                    buttonText: 'Select SSLC photo',
+                                    file: controller.state.sslc_path),
+                                SizedBox(height: 30),
+                                CheckboxMenuButton(
+                                  style: ButtonStyle(
+                                      alignment: AlignmentDirectional.topStart,
+                                      elevation: MaterialStatePropertyAll(0),
+                                      backgroundColor: MaterialStatePropertyAll(
+                                          Colors.transparent)),
+                                  value: controller.state.isTermsAgreed.value,
+                                  onChanged: (val) => controller
+                                      .state.isTermsAgreed.value = val!,
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(vertical: 10),
+                                    width: Get.width - 100,
+                                    child: Text(
+                                      'I here by solemnly declare that the above information provided by me are true and correct to the best of my knowledge and belief.lam fully aware of the course,syllabus,duration,training and validity of the certificate before getting in to admission. Further I will not raise any com plaints against the certification body about the validity of the merit certificate that I have completely understood.I shall obey the rules and regulations of study centre.Now in force and as amended or altered from time to time.I accept all decision of the TSSR council authorities in all matters of training.',
+                                      overflow: TextOverflow.visible,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                                 SizedBox(height: 40),
                                 controller.state.isLoading.value
                                     ? SizedBox(
@@ -144,8 +180,7 @@ class StudentUpload extends GetView<StudentUploadController> {
                                             fixedSize: Size(Get.width, 50),
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
-                                                    BorderRadius.circular(
-                                                        10))),
+                                                    BorderRadius.circular(10))),
                                         child: Text('Submit')),
                                 SizedBox(height: 30),
                               ],
@@ -154,39 +189,93 @@ class StudentUpload extends GetView<StudentUploadController> {
                         )
                       : Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(height: 100),
-                              Text(
-                                'Select the Excel file with .xlsx extension. The sheet should be properly structured accordingly.',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 14,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(height: 50),
+                                Text(
+                                  'Download the Dummy or Model of Excel sheet which is to be uploaded',
+                                  textAlign: TextAlign.center,
                                 ),
-                              ),
-                              SizedBox(height: 20),
-                              controller.state.isLoading.value
-                                  ? SizedBox(
-                                      height: 60,
-                                      width: 60,
-                                      child: CircularProgressIndicator())
-                                  : ElevatedButton(
-                                      onPressed: () async {
-                                        await controller.selectAndUploadExcel();
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                          fixedSize: Size(Get.width, 60),
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20))),
-                                      child: Text(
-                                        'Select and Upload',
-                                        style: TextStyle(
-                                            fontSize: 17, letterSpacing: 2),
+                                SizedBox(height: 10),
+                                ElevatedButton(
+                                  onPressed: () async => await ExcelService()
+                                      .createSkeletonExcelFiles(
+                                          titles: [
+                                        'name',
+                                        'dob',
+                                        'age',
+                                        'gender',
+                                        'aadhaar',
+                                        'parent_name',
+                                        'district',
+                                        'address',
+                                        'pincode',
+                                        'mobile_no',
+                                        'email',
+                                        'course',
+                                        'date_of_admission',
+                                        'course_batch'
+                                      ],
+                                          fileName: 'Student_Details_Skeleton',
+                                          context: context),
+                                  child: Text('Download '),
+                                ),
+                                SizedBox(height: 50),
+                                Text(
+                                  'Select the Excel file with .xlsx extension. The sheet should be properly structured accordingly. Use the above excel to upload the data.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                SizedBox(height: 20),
+                                controller.state.isLoading.value
+                                    ? SizedBox(
+                                        height: 60,
+                                        width: 60,
+                                        child: CircularProgressIndicator())
+                                    : ElevatedButton(
+                                        onPressed: () async {
+                                          await controller
+                                              .selectAndUploadExcel();
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                            fixedSize: Size(Get.width, 60),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20))),
+                                        child: Text(
+                                          'Select and Upload',
+                                          style: TextStyle(
+                                              fontSize: 17, letterSpacing: 2),
+                                        ),
+                                      ),
+                                SizedBox(height: 30),
+                                CheckboxMenuButton(
+                                  style: ButtonStyle(
+                                      alignment: AlignmentDirectional.topStart,
+                                      elevation: MaterialStatePropertyAll(0),
+                                      backgroundColor: MaterialStatePropertyAll(
+                                          Colors.transparent)),
+                                  value: controller.state.isTermsAgreed.value,
+                                  onChanged: (val) => controller
+                                      .state.isTermsAgreed.value = val!,
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(vertical: 10),
+                                    width: Get.width - 100,
+                                    child: Text(
+                                      'I here by solemnly declare that the above information provided by me are true and correct to the best of my knowl- edge and belief.lam fully aware of the course,syllabus,duration,training and valid- ity of the certificate before getting in to admission. Further I will not raise any com- plaints against the certification body about the validity of the merit certificate that I have completely understood.I shall obey the rules and regulations of study centre.Now in force and as amended or altered from time to time.I accept all deci- sion of the TSSR council authorities in all matters of training.',
+                                      overflow: TextOverflow.visible,
+                                      style: TextStyle(
+                                        fontSize: 12,
                                       ),
                                     ),
-                            ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         )
                 ]),
@@ -194,6 +283,20 @@ class StudentUpload extends GetView<StudentUploadController> {
             ],
           );
         }));
+  }
+
+  Widget kPhotoSelectionButton(
+      {required Rx<PlatformFile> file, required String buttonText}) {
+    return Row(
+      children: [
+        ElevatedButton(
+          onPressed: () async => await controller.selectPhoto(file: file),
+          child: Text(buttonText),
+        ),
+        SizedBox(width: 10),
+        Text(file.value.name.toString()),
+      ],
+    );
   }
 }
 

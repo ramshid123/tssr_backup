@@ -18,7 +18,8 @@ class TssrPage extends GetView<TssrPageController> {
       bool isMobile = Get.width <= 768 ? true : false;
       return Scaffold(
         backgroundColor: Colors.grey[100],
-        appBar: isMobile ? CustomAppBar('TSSR') : null,
+        // appBar: isMobile ? CustomAppBar('TSSR') : null,
+        appBar: CustomAppBar('TSSR'),
         body: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverAppBar(
@@ -35,7 +36,9 @@ class TssrPage extends GetView<TssrPageController> {
           ],
           body: Obx(() {
             return Padding(
-              padding: isMobile?EdgeInsets.zero:EdgeInsets.symmetric(horizontal: Get.width/20),
+              padding: isMobile
+                  ? EdgeInsets.zero
+                  : EdgeInsets.symmetric(horizontal: Get.width / 20),
               child: FirestoreListView(
                 query: controller.state.query.value,
                 emptyBuilder: (context) => Center(

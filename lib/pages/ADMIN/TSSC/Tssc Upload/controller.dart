@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -57,15 +59,13 @@ class TsscUploadPageController extends GetxController {
         ));
       }
     } catch (e) {
-      printError(info: e.toString());
-      if (e.toString().contains('Null')) {
-        Get.defaultDialog(
-            title: 'Something gone wrong',
-            content: const Icon(
-              Icons.warning,
-              color: Colors.red,
-            ));
-      }
+      print(e);
+      Get.defaultDialog(
+          title: 'Something gone wrong',
+          content: const Icon(
+            Icons.warning,
+            color: Colors.red,
+          ));
     } finally {
       state.isLoading.value = false;
     }
@@ -113,6 +113,16 @@ class TsscUploadPageController extends GetxController {
       } finally {
         state.isLoading.value = false;
       }
+    }
+  }
+
+  void test() {
+    Random random = Random();
+    for (int i = 0; i < 1000000; i++) {
+      String seconds = (DateTime.now().microsecondsSinceEpoch).toString();
+      final value =
+          '${100 + random.nextInt(900)}/${seconds.substring(seconds.length - 5)}';
+      print(value);
     }
   }
 }

@@ -15,7 +15,7 @@ class TStorePage extends GetView<TStorePageController> {
     return LayoutBuilder(builder: (context,c) {
       bool isMobile = Get.width <= 768 ? true : false;
       return Scaffold(
-        appBar:isMobile? CustomAppBar('T Store'):null,
+        appBar:CustomAppBar('T Store'),
         body: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverAppBar(

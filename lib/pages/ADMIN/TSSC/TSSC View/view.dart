@@ -16,7 +16,8 @@ class TsscPage extends GetView<TsscPageController> {
       bool isMobile = Get.width <= 768 ? true : false;
       return Scaffold(
         backgroundColor: Colors.grey[100],
-        appBar: isMobile ? CustomAppBar('TSSR') : null,
+        // appBar: isMobile ? CustomAppBar('TSSC') : null,
+        appBar: CustomAppBar('TSSC'),
         body: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverAppBar(

@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:get/get.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
+import 'package:tssr_ctrl/models/time_api_model.dart';
 import 'package:tssr_ctrl/pages/ADMIN/study_centre/franchise_upload/controller.dart';
 import 'package:tssr_ctrl/services/database_service.dart';
 import 'package:tssr_ctrl/widgets/app_bar.dart';
 import 'package:tssr_ctrl/widgets/tssc.dart';
+import 'package:http/http.dart' as http;
 
 class FranchiseUploadPage extends GetView<FranchiseUploadController> {
   const FranchiseUploadPage({super.key});
@@ -98,9 +100,9 @@ class FranchiseUploadPage extends GetView<FranchiseUploadController> {
                   key: controller.state.formkey2,
                   child: Column(
                     children: [
-                      CustomTextForm(
-                          hintText: 'ATC Code', ctrl: controller.state.atc),
-                      SizedBox(height: 20),
+                      // CustomTextForm(
+                      //     hintText: 'ATC Code', ctrl: controller.state.atc),
+                      // SizedBox(height: 20),
                       CustomTextForm(
                           hintText: 'Centre Head',
                           ctrl: controller.state.centre_head),

@@ -15,7 +15,8 @@ class TBooksPage extends GetView<TBooksController> {
     return LayoutBuilder(builder: (context, c) {
       bool isMobile = Get.width <= 768 ? true : false;
       return Scaffold(
-        appBar: isMobile ? CustomAppBar('T Store') : null,
+        // appBar: isMobile ? CustomAppBar('T Store') : null,
+        appBar: CustomAppBar('T Store'),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: () async {

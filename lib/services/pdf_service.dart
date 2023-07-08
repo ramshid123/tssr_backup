@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' as wd;
 import 'package:get/get.dart';
 import 'package:jsaver/jSaver.dart';
@@ -14,6 +15,7 @@ import 'dart:io';
 
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:tssr_ctrl/services/excel_service.dart';
 
 class PdfApi {
   Future generateDocument({
@@ -22,7 +24,9 @@ class PdfApi {
     required controller,
     required bool isPPTC,
     required pageMode pgMode,
+    required String course,
     required GetDataMode dataMode,
+    required OutputFormat outputFormat,
   }) async {
     try {
       controller.state.isLoading.value = true;
@@ -31,16 +35,22 @@ class PdfApi {
       if (isConnected) {
         final dataList = isPPTC
             ? await getDataFromDBForPPTC(orgName: orgName, dataMode: dataMode)
-            : await getDataFromDB(orgName: orgName, dataMode: dataMode);
-        final doc = await createDocument(dataList, orgName, pgMode, dataMode);
-        await saveDocument(doc, orgName, context);
-      } else {
-        if (orgName.isEmpty)
-          Get.back();
-        else {
-          Get.back();
-          Get.back();
+            : await getDataFromDB(
+                orgName: orgName, dataMode: dataMode, course: course);
+        if (outputFormat == OutputFormat.pdf) {
+          final doc = await createDocument(dataList, orgName, pgMode, dataMode);
+          await saveDocument(doc, orgName, context);
+        } else {
+          ExcelService().createExcel(
+              fileName: orgName,
+              context: context,
+              titles: ['Reg No', 'Name', 'Course', 'Study Centre'],
+              fields: ['reg_no', 'st_name', 'course', 'study_centre'],
+              dataList: dataList);
         }
+      } else {
+        Get.back();
+
         showSnackBar(
             context: context,
             isError: true,
@@ -48,12 +58,10 @@ class PdfApi {
             subtitle: 'No stable internet connection detected');
       }
     } catch (e) {
-      if (orgName.isEmpty)
-        Get.back();
-      else {
-        Get.back();
-        Get.back();
-      }
+      print(e);
+
+      Get.back();
+
       showSnackBar(
           context: context,
           isError: true,
@@ -70,7 +78,9 @@ class PdfApi {
     if (kIsWeb) {
       final bytes = await doc.save();
       final s = await JSaver.instance.saveFromData(
-          data: bytes, name: 'test.pdf', type: JSaverFileType.PDF);
+          data: bytes,
+          name: '${orgName.isEmpty ? "All_Centre" : orgName}.pdf',
+          type: JSaverFileType.PDF);
     } else {
       var status = await Permission.storage.request();
       if (status.isDenied) {
@@ -93,22 +103,25 @@ class PdfApi {
             isError: false,
             title: 'Success',
             subtitle: 'PDF saved to Downloads');
-        if (orgName.isEmpty)
-          Get.back();
-        else {
-          Get.back();
-          Get.back();
-        }
+        Get.back();
       }
     }
   }
 
   Future getDataFromDB(
-      {required String orgName, required GetDataMode dataMode}) async {
+      {required String orgName,
+      required GetDataMode dataMode,
+      required String course}) async {
     final snapshot = orgName.isEmpty
-        ? await DatabaseService.StudentDetailsCollection.get()
+        ? await DatabaseService.StudentDetailsCollection.where('course',
+                isEqualTo: course)
+            // .orderBy('course')
+            .orderBy('st_name')
+            .get()
         : await DatabaseService.StudentDetailsCollection.where('study_centre',
                 isEqualTo: orgName)
+            .where('course', isEqualTo: course)
+            // .orderBy('course')
             .orderBy('st_name')
             .get();
     final dataList = snapshot.docs;
@@ -121,12 +134,13 @@ class PdfApi {
   }) async {
     final snapshot = orgName.isEmpty
         ? await DatabaseService.StudentDetailsCollection.where('course',
-                isEqualTo: 'BSC Computer Science')
+                isEqualTo: 'PRE PRIMARY TTC')
+            .orderBy('study_centre')
             .orderBy('st_name')
             .get()
         : await DatabaseService.StudentDetailsCollection.where('study_centre',
                 isEqualTo: orgName)
-            .where('course', isEqualTo: 'BSC Computer Science')
+            .where('course', isEqualTo: 'PRE PRIMARY TTC')
             .orderBy('st_name')
             .get();
     final dataList = snapshot.docs;
@@ -142,6 +156,10 @@ class PdfApi {
 
     final font1 = await PdfGoogleFonts.openSansRegular();
     final font2 = await PdfGoogleFonts.openSansBold();
+
+    final headerImage = pw.MemoryImage(
+      (await rootBundle.load('assets/TSSR_header.png')).buffer.asUint8List(),
+    );
 
     doc.addPage(pw.MultiPage(
         margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
@@ -167,7 +185,8 @@ class PdfApi {
                           )));
         },
         build: (pw.Context context) => <pw.Widget>[
-              pw.Header(text: 'TSSR Council', level: 1),
+              // pw.Header(text: 'TSSR Council', level: 1),
+              pw.Image(headerImage),
               pw.Header(
                   text:
                       'Centre : ${orgName.isEmpty ? "All Centres" : orgName}'),
@@ -279,6 +298,8 @@ enum GetDataMode {
   pptcTour,
 }
 
+enum OutputFormat { pdf, excel }
+
 Widget StudentDataHeader(Font font1) {
   final CWU = PdfPageFormat.a4.availableWidth / 12;
   return Table(
@@ -286,8 +307,10 @@ Widget StudentDataHeader(Font font1) {
       border: TableBorder.all(color: PdfColors.black),
       columnWidths: {
         0: FixedColumnWidth(CWU),
-        1: FixedColumnWidth(CWU * 3),
-        2: FixedColumnWidth(CWU * 8),
+        1: FixedColumnWidth(CWU * 2),
+        2: FixedColumnWidth(CWU * 3),
+        3: FixedColumnWidth(CWU * 3),
+        4: FixedColumnWidth(CWU * 3),
       },
       children: [
         TableRow(
@@ -310,6 +333,16 @@ Widget StudentDataHeader(Font font1) {
               child: Text('Name',
                   style: TextStyle(font: font1, fontWeight: FontWeight.bold)),
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+              child: Text('Course',
+                  style: TextStyle(font: font1, fontWeight: FontWeight.bold)),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+              child: Text('Study Centre',
+                  style: TextStyle(font: font1, fontWeight: FontWeight.bold)),
+            ),
           ],
         ),
       ]);
@@ -323,8 +356,10 @@ Widget StudentsDataTable(
     border: TableBorder.all(color: PdfColors.black),
     columnWidths: {
       0: FixedColumnWidth(CWU),
-      1: FixedColumnWidth(CWU * 3),
-      2: FixedColumnWidth(CWU * 8),
+      1: FixedColumnWidth(CWU * 2),
+      2: FixedColumnWidth(CWU * 3),
+      3: FixedColumnWidth(CWU * 3),
+      4: FixedColumnWidth(CWU * 3),
     },
     children: [
       // for (var val in dataList)
@@ -349,6 +384,20 @@ Widget StudentsDataTable(
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
               child: Text(
                 dataList[i]['st_name'],
+                style: TextStyle(font: font1),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+              child: Text(
+                dataList[i]['course'],
+                style: TextStyle(font: font1),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+              child: Text(
+                dataList[i]['study_centre'],
                 style: TextStyle(font: font1),
               ),
             ),

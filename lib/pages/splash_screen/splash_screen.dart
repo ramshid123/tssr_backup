@@ -21,15 +21,18 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: SizedBox(
-          width: Get.width / 2,
-          height: Get.width / 2,
-          child: RiveAnimation.asset(
-            'assets/tssr_anim.riv',
-            onInit: _onInit,
+      body: Column(
+        children: [
+          SizedBox(height: 30, width: double.infinity),
+          SizedBox(
+            width: Get.width * 0.4,
+            height: Get.width * 0.4,
+            child: RiveAnimation.asset(
+              'assets/tssr_anim.riv',
+              onInit: _onInit,
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

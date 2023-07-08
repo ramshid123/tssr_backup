@@ -15,7 +15,8 @@ class CoursesPage extends GetView<CoursesController> {
     return LayoutBuilder(builder: (context, c) {
       bool isMobile = Get.width <= 768 ? true : false;
       return Scaffold(
-        appBar: isMobile ? CustomAppBar('Courses') : null,
+        // appBar: isMobile ? CustomAppBar('Courses') : null,
+        appBar: CustomAppBar('Courses'),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: () async {

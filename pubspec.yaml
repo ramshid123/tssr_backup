@@ -33,6 +33,7 @@ dependencies:
   custom_radio_grouped_button: ^2.2.0
   dotted_border: ^2.0.0+3
   dropdown_search: ^5.0.6
+  excel: ^2.1.0
   excel_to_json: ^1.1.0
   external_path: ^1.0.3
   file_picker: ^5.3.0
@@ -43,19 +44,41 @@ dependencies:
   firestore_search_input: ^0.2.0
   flutter:
     sdk: flutter
+  flutter_autoupdate: ^1.0.0
   get: ^4.6.5
   http: ^0.13.3
   jsaver: ^1.2.0
+  path_provider: ^2.0.15
   pdf: ^3.10.3
   permission_handler: ^10.2.0
+  photo_view: ^0.14.0
   printing: ^5.10.4
   rive: ^0.11.1
   shared_preferences: ^2.1.1
 
 dev_dependencies:
+  flutter_launcher_icons: "^0.13.1"
   flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/ic_launcher.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "assets/ic_launcher.png"
+    background_color: "#ffffff"
+    theme_color: "#hexcode"
+  windows:
+    generate: true
+    image_path: "assets/ic_launcher.png"
+    icon_size: 48 # min:48, max:256, default: 48
+  macos:
+    generate: true
+    image_path: "assets/ic_launcher.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

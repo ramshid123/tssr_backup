@@ -16,7 +16,8 @@ class HallTicketPage extends GetView<HallTicketPageController> {
       bool isMobile = Get.width <= 768 ? true : false;
       return Scaffold(
         backgroundColor: Colors.grey[100],
-        appBar: isMobile ? CustomAppBar('TSSR Data') : null,
+        // appBar: isMobile ? CustomAppBar('TSSR Data') : null,
+        appBar: CustomAppBar('Hall Ticket Data'),
         body: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverAppBar(

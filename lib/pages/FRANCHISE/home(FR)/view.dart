@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
 import 'package:tssr_ctrl/pages/FRANCHISE/home(FR)/controller.dart';
 import 'package:tssr_ctrl/routes/names.dart';
+import 'package:tssr_ctrl/services/excel_service.dart';
 import 'package:tssr_ctrl/widgets/drawer.dart';
 
 class HomeFrPage extends GetView<HomeFrController> {
@@ -67,7 +68,8 @@ class HomeFrPage extends GetView<HomeFrController> {
                                   padding: EdgeInsets.only(left: 20),
                                 ),
                                 IconButton(
-                                  onPressed: () {},
+                                  onPressed: () async => await Get.toNamed(
+                                      AppRouteNames.NOTIFICATION_CLIENT),
                                   icon: Icon(Icons.notifications,
                                       size: 35,
                                       color: ColorConstants.greenish_clr),
@@ -123,8 +125,7 @@ class HomeFrPage extends GetView<HomeFrController> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                controller
-                                                    .state.centre_name.value,
+                                                controller.state.place.value,
                                                 style: TextStyle(
                                                     fontSize: 18,
                                                     color: Colors.white),
@@ -132,7 +133,7 @@ class HomeFrPage extends GetView<HomeFrController> {
                                               SizedBox(height: 10),
                                               Text(
                                                 controller
-                                                    .state.centre_head.value,
+                                                    .state.centre_name.value,
                                                 style: TextStyle(
                                                     fontSize: 23,
                                                     color: Colors.white,
@@ -170,7 +171,7 @@ class HomeFrPage extends GetView<HomeFrController> {
                                     Icons.storefront_outlined,
                                     AppRouteNames.T_STORE_FR),
                                 HomeScreenButton(
-                                    'My Courses',
+                                    'Approved Courses',
                                     Icons.menu_book_outlined,
                                     AppRouteNames.MY_COURSES_PAGE),
                                 HomeScreenButton(
@@ -227,7 +228,8 @@ class HomeFrPage extends GetView<HomeFrController> {
                                   padding: EdgeInsets.only(left: 20),
                                 ),
                                 IconButton(
-                                  onPressed: () {},
+                                  onPressed: () async => await Get.toNamed(
+                                      AppRouteNames.NOTIFICATION_CLIENT),
                                   icon: Icon(Icons.notifications,
                                       size: 35,
                                       color: ColorConstants.greenish_clr),
@@ -281,8 +283,7 @@ class HomeFrPage extends GetView<HomeFrController> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                controller
-                                                    .state.centre_name.value,
+                                                controller.state.place.value,
                                                 style: TextStyle(
                                                     fontSize: 18,
                                                     color: Colors.white),
@@ -290,7 +291,7 @@ class HomeFrPage extends GetView<HomeFrController> {
                                               SizedBox(height: 10),
                                               Text(
                                                 controller
-                                                    .state.centre_head.value,
+                                                    .state.centre_name.value,
                                                 style: TextStyle(
                                                     fontSize: 23,
                                                     color: Colors.white,
@@ -328,7 +329,7 @@ class HomeFrPage extends GetView<HomeFrController> {
                                     Icons.storefront_outlined,
                                     AppRouteNames.T_STORE_FR),
                                 HomeScreenButton(
-                                    'My Courses',
+                                    'Approved Courses',
                                     Icons.menu_book_outlined,
                                     AppRouteNames.MY_COURSES_PAGE),
                                 HomeScreenButton(

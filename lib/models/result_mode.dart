@@ -54,15 +54,15 @@ class Sheet1 {
   String toRawJson() => json.encode(toJson());
 
   factory Sheet1.fromJson(Map<String, dynamic> json) => Sheet1(
-        regNo: json["reg_no"],
-        name: json["name"],
-        course: json["course"],
-        studyCentre: json["study_centre"],
-        examCentre: json["exam_centre"],
-        duration: json["duration"],
-        examDate: json["exam_date"],
-        result: json["result"],
-        grade: json["grade"],
+        regNo: json["reg_no"].toString(),
+        name: json["name"].toString(),
+        course: json["course"].toString(),
+        studyCentre: json["study_centre"].toString(),
+        examCentre: json["exam_centre"].toString(),
+        duration: json["duration"].toString(),
+        examDate: json["exam_date"].toString(),
+        result: json["result"].toString(),
+        grade: json["grade"].toString(),
       );
 
   Map<String, dynamic> toJson() => {

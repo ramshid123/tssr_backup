@@ -8,6 +8,7 @@ import 'package:tssr_ctrl/constants/colors.dart';
 import 'package:tssr_ctrl/pages/ADMIN/TSSR/TSSR%20View/tssrpage_index.dart';
 import 'package:http/http.dart' as http;
 import 'package:tssr_ctrl/pages/ADMIN/home_page/controller.dart';
+import 'package:tssr_ctrl/pages/ADMIN/study_centre/franchise_upload/franchiseupload_index.dart';
 import 'package:tssr_ctrl/pages/splash_screen/splash_screen.dart';
 import 'package:tssr_ctrl/routes/names.dart';
 import 'package:tssr_ctrl/routes/shared_pref_strings.dart';
@@ -77,7 +78,8 @@ class HomePage extends GetView<HomePageController> {
                                       padding: EdgeInsets.only(left: 20),
                                     ),
                                     IconButton(
-                                      onPressed: () {},
+                                      onPressed: () async => await Get.toNamed(
+                                          AppRouteNames.NOTIFICATION_ADMIN),
                                       icon: Icon(Icons.notifications,
                                           size: 35,
                                           color: ColorConstants.greenish_clr),
@@ -137,13 +139,13 @@ class HomePage extends GetView<HomePageController> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text(
-                                                    controller.state.centre_name
-                                                        .value,
-                                                    style: TextStyle(
-                                                        fontSize: 18,
-                                                        color: Colors.white),
-                                                  ),
+                                                  // Text(
+                                                  //   controller.state.centre_name
+                                                  //       .value,
+                                                  //   style: TextStyle(
+                                                  //       fontSize: 18,
+                                                  //       color: Colors.white),
+                                                  // ),
                                                   SizedBox(height: 10),
                                                   Text(
                                                     controller.state.centre_head
@@ -246,7 +248,8 @@ class HomePage extends GetView<HomePageController> {
                                       padding: EdgeInsets.only(left: 20),
                                     ),
                                     IconButton(
-                                      onPressed: () {},
+                                      onPressed: () async => await Get.toNamed(
+                                          AppRouteNames.NOTIFICATION_ADMIN),
                                       icon: Icon(Icons.notifications,
                                           size: 35,
                                           color: ColorConstants.greenish_clr),
@@ -314,15 +317,15 @@ class HomePage extends GetView<HomePageController> {
                                                         color: Colors.white),
                                                   ),
                                                   SizedBox(height: 10),
-                                                  Text(
-                                                    controller.state.centre_head
-                                                        .value,
-                                                    style: TextStyle(
-                                                        fontSize: 23,
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.w500),
-                                                  ),
+                                                  // Text(
+                                                  //   controller.state.centre_head
+                                                  //       .value,
+                                                  //   style: TextStyle(
+                                                  //       fontSize: 23,
+                                                  //       color: Colors.white,
+                                                  //       fontWeight:
+                                                  //           FontWeight.w500),
+                                                  // ),
                                                   SizedBox(height: 10),
                                                   Text(
                                                     controller.state.atc.value,

@@ -17,7 +17,7 @@ class StudentPage extends GetView<StudentPageController> {
         bool isMobile = Get.width<=768?true:false;
         return Scaffold(
           backgroundColor: Colors.grey[100],
-          appBar: isMobile?CustomAppBar('Student Details'):null,
+          appBar:CustomAppBar('Student Details'),
           body: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) => [
               SliverAppBar(
@@ -47,7 +47,7 @@ class StudentPage extends GetView<StudentPageController> {
                     ),
                   ),
                   itemBuilder: (context, doc) {
-                    return StudentCard(doc.data(), controller);
+                    return StudentCard(doc.data(), controller, context);
                     // return ListTile();
                   },
                   pageSize: 5,

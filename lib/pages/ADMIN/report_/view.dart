@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
@@ -8,6 +10,7 @@ import 'package:tssr_ctrl/widgets/app_bar.dart';
 import 'reportadminpage_index.dart';
 import 'package:tssr_ctrl/routes/names.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
+import 'package:path_provider/path_provider.dart' as pathProvider;
 
 class ReportAdminPage extends GetView<ReportAdminPageController> {
   const ReportAdminPage({super.key});
@@ -45,54 +48,63 @@ class ReportAdminPage extends GetView<ReportAdminPageController> {
                   children: [
                     ReportPageButton('Student Details',
                         controller: controller,
+                        isPPTC: false,
                         ctx: context,
                         pgmd: pageMode.potrait,
                         gdmd: GetDataMode.studentDetails,
                         isMobile: isMobile),
                     ReportPageButton('PPTC Camp Report',
                         controller: controller,
+                        isPPTC: true,
                         pgmd: pageMode.potrait,
                         ctx: context,
                         gdmd: GetDataMode.pptcCamp,
                         isMobile: isMobile),
                     ReportPageButton('PPTC Class Test',
                         controller: controller,
+                        isPPTC: true,
                         ctx: context,
                         pgmd: pageMode.landscape,
                         gdmd: GetDataMode.pptcClassTest,
                         isMobile: isMobile),
                     ReportPageButton('PPTC Commision',
                         controller: controller,
+                        isPPTC: true,
                         ctx: context,
                         pgmd: pageMode.potrait,
                         gdmd: GetDataMode.pptcCommision,
                         isMobile: isMobile),
                     ReportPageButton('PPTC Craft Report',
                         controller: controller,
+                        isPPTC: true,
                         ctx: context,
                         pgmd: pageMode.landscape,
                         gdmd: GetDataMode.pptcCraft,
                         isMobile: isMobile),
                     ReportPageButton('PPTC Fest Report',
                         controller: controller,
+                        isPPTC: true,
                         ctx: context,
                         pgmd: pageMode.potrait,
                         gdmd: GetDataMode.pptcFest,
                         isMobile: isMobile),
                     ReportPageButton('PPTC Practical',
                         controller: controller,
+                        isPPTC: true,
                         ctx: context,
                         pgmd: pageMode.landscape,
                         gdmd: GetDataMode.pptcPractical,
                         isMobile: isMobile),
                     ReportPageButton('PPTC Teaching Practice',
                         controller: controller,
+                        isPPTC: true,
                         ctx: context,
                         pgmd: pageMode.landscape,
                         gdmd: GetDataMode.pptcTeachingPractice,
                         isMobile: isMobile),
                     ReportPageButton('PPTC Tour',
                         controller: controller,
+                        isPPTC: true,
                         ctx: context,
                         pgmd: pageMode.potrait,
                         gdmd: GetDataMode.pptcTour,
@@ -113,6 +125,7 @@ Widget ReportPageButton(String title,
     {required pageMode pgmd,
     required GetDataMode gdmd,
     required BuildContext ctx,
+    required bool isPPTC,
     required ReportAdminPageController controller,
     required bool isMobile}) {
   return GetBuilder(
@@ -120,6 +133,29 @@ Widget ReportPageButton(String title,
       builder: (controller) {
         return ElevatedButton(
           onPressed: () async {
+            OutputFormat outputFormat = OutputFormat.pdf;
+            await Get.bottomSheet(Container(
+              height: 100,
+              width: double.infinity,
+              color: Colors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  ElevatedButton(
+                      onPressed: () {
+                        Get.back();
+                        outputFormat = OutputFormat.pdf;
+                      },
+                      child: Text('PDF')),
+                  ElevatedButton(
+                      onPressed: () {
+                        Get.back();
+                        outputFormat = OutputFormat.excel;
+                      },
+                      child: Text('Excel')),
+                ],
+              ),
+            ));
             await Get.defaultDialog(
                 title: 'Options',
                 content: controller.state.isLoading.value
@@ -132,14 +168,33 @@ Widget ReportPageButton(String title,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           ElevatedButton(
-                            onPressed: () async => await PdfApi()
-                                .generateDocument(
-                                    context: ctx,
-                                    controller: controller,
-                                    orgName: '',
-                                    pgMode: pgmd,
-                                    dataMode: gdmd,
-                                    isPPTC: false),
+                            onPressed: () async {
+                              Get.bottomSheet(Container(
+                                height: Get.height / 2,
+                                width: Get.width,
+                                color: Colors.white,
+                                child: FirestoreListView(
+                                  query: DatabaseService.CourseCollection,
+                                  itemBuilder: (context, doc) {
+                                    final item = doc.data();
+                                    return ListTile(
+                                      title: Text(item['course']),
+                                      onTap: () async {
+                                        await PdfApi().generateDocument(
+                                            context: ctx,
+                                            controller: controller,
+                                            orgName: '',
+                                            course: item['course'],
+                                            pgMode: pgmd,
+                                            dataMode: gdmd,
+                                            outputFormat: outputFormat,
+                                            isPPTC: isPPTC);
+                                      },
+                                    );
+                                  },
+                                ),
+                              ));
+                            },
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: ColorConstants.purple_clr,
                                 foregroundColor: Colors.white,
@@ -156,6 +211,7 @@ Widget ReportPageButton(String title,
                                   DatabaseService.FranchiseCollection.where(
                                       'isAdmin',
                                       isEqualTo: 'false');
+                              Get.back();
                               await Get.bottomSheet(
                                 backgroundColor: Colors.white,
                                 Container(
@@ -177,13 +233,37 @@ Widget ReportPageButton(String title,
                                       return ListTile(
                                         title: Text(item['centre_name']),
                                         onTap: () async {
-                                          await PdfApi().generateDocument(
-                                              controller: controller,
-                                              context: ctx,
-                                              orgName: item['centre_name'],
-                                              isPPTC: false,
-                                              pgMode: pgmd,
-                                              dataMode: gdmd);
+                                          Get.back();
+                                          Get.bottomSheet(Container(
+                                            height: Get.height / 2,
+                                            width: Get.width,
+                                            color: Colors.white,
+                                            child: ListView.builder(
+                                              itemBuilder: (context, index) {
+                                                final courseItem =
+                                                    item['courses'][index];
+                                                return ListTile(
+                                                  title: Text(courseItem),
+                                                  onTap: () async {
+                                                    await PdfApi()
+                                                        .generateDocument(
+                                                            controller:
+                                                                controller,
+                                                            context: ctx,
+                                                            course: courseItem,
+                                                            orgName: item[
+                                                                'centre_name'],
+                                                            isPPTC: isPPTC,
+                                                            pgMode: pgmd,
+                                                            outputFormat:
+                                                                outputFormat,
+                                                            dataMode: gdmd);
+                                                  },
+                                                );
+                                              },
+                                              itemCount: item['courses'].length,
+                                            ),
+                                          ));
                                         },
                                       );
                                     },

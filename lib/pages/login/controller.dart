@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tssr_ctrl/app_update.dart';
 import 'package:tssr_ctrl/services/authentication_service.dart';
 import 'package:tssr_ctrl/services/database_service.dart';
 import 'package:intl/intl.dart';
@@ -11,6 +14,15 @@ import 'package:tssr_ctrl/routes/shared_pref_strings.dart';
 class LoginPageController extends GetxController {
   LoginPageController();
   final state = LoginPageState();
+
+  @override
+  void onReady() async {
+    // TODO: implement onReady
+    super.onReady();
+    // if (Platform.isAndroid) {
+    //    initPlatformState();
+    // }
+  }
 
   Future login(String email, String password) async {
     if (state.formkey.currentState!.validate()) {
@@ -23,11 +35,10 @@ class LoginPageController extends GetxController {
                 .get();
         if (userInfoSnapshot.docs.length == 0) {
           print('no user found');
-           Get.showSnackbar(
+          Get.showSnackbar(
             GetSnackBar(
               title: 'No user found',
-              message:
-                  'Please check you email and password',
+              message: 'Please check you email and password',
               backgroundColor: Colors.red,
               duration: 5.seconds,
             ),

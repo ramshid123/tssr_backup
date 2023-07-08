@@ -51,13 +51,13 @@ class Sheet1 {
 
     factory Sheet1.fromJson(Map<String, dynamic> json) => Sheet1(
         registerNo: json["register_no"].toString(),
-        name: json["name"],
-        course: json["course"],
-        studyCentre: json["study_centre"],
-        duration: json["duration"],
-        examDate: json["exam_date"],
-        result: json["result"],
-        grade: json["grade"],
+        name: json["name"].toString(),
+        course: json["course"].toString(),
+        studyCentre: json["study_centre"].toString(),
+        duration: json["duration"].toString(),
+        examDate: json["exam_date"].toString(),
+        result: json["result"].toString(),
+        grade: json["grade"].toString(),
     );
 
     Map<String, dynamic> toJson() => {

@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:get/get.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
 import 'package:tssr_ctrl/pages/ADMIN/TSSR/result%20upload/controller.dart';
+import 'package:tssr_ctrl/services/excel_service.dart';
 import 'package:tssr_ctrl/widgets/app_bar.dart';
 import 'package:tssr_ctrl/widgets/tssc.dart';
 
@@ -119,8 +120,7 @@ class ResultUploadPage extends GetView<ResultUploadController> {
                                             fixedSize: Size(Get.width, 50),
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
-                                                    BorderRadius.circular(
-                                                        10))),
+                                                    BorderRadius.circular(10))),
                                         child: Text('Submit')),
                                 SizedBox(height: 30),
                               ],
@@ -132,7 +132,31 @@ class ResultUploadPage extends GetView<ResultUploadController> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              SizedBox(height: 100),
+                              SizedBox(height: 50),
+                              Text(
+                                'Download the Dummy or Model of Excel sheet which is to be uploaded',
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: 10),
+                              ElevatedButton(
+                                onPressed: () async => await ExcelService()
+                                    .createSkeletonExcelFiles(
+                                        titles: [
+                                      'reg_no',
+                                      'name',
+                                      'course',
+                                      'study_centre',
+                                      'exam_centre',
+                                      'duration',
+                                      'exam_date',
+                                      'result',
+                                      'grade',
+                                    ],
+                                        fileName: 'Result_Data_Skeleton',
+                                        context: context),
+                                child: Text('Download '),
+                              ),
+                              SizedBox(height: 50),
                               Text(
                                 'Select the Excel file with .xlsx extension. The sheet should be properly structured accordingly.',
                                 textAlign: TextAlign.center,

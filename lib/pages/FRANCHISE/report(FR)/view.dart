@@ -69,13 +69,83 @@ Widget ReportPageButton(String title, ReportFranchiseController controller,
     required BuildContext context}) {
   return ElevatedButton(
     onPressed: () async {
-      await PdfApi().generateDocument(
-          context: context,
-          controller: controller,
-          orgName: controller.state.franchiseName!,
-          pgMode: pgmd,
-          dataMode: gdmd,
-          isPPTC: false);
+      OutputFormat outputFormat = OutputFormat.pdf;
+      await Get.bottomSheet(Container(
+        height: 100,
+        width: double.infinity,
+        color: Colors.white,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            ElevatedButton(
+                onPressed: () {
+                  Get.back();
+                  outputFormat = OutputFormat.pdf;
+                },
+                child: Text('PDF')),
+            ElevatedButton(
+                onPressed: () {
+                  Get.back();
+                  outputFormat = OutputFormat.excel;
+                },
+                child: Text('Excel')),
+          ],
+        ),
+      ));
+      Get.bottomSheet(Container(
+        height: Get.height / 2,
+        width: Get.width,
+        color: Colors.white,
+        child: FirestoreListView(
+          query: DatabaseService.FranchiseCollection.where('centre_name',
+              isEqualTo: controller.state.franchiseName),
+          itemBuilder: (context, doc) {
+            final courses = doc.data()['courses'];
+            print(courses);
+            return ListView.builder(
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(courses[index]),
+                  onTap: () async {
+                    await PdfApi().generateDocument(
+                        context: context,
+                        controller: controller,
+                        course: courses[index],
+                        orgName: controller.state.franchiseName!,
+                        pgMode: pgmd,
+                        outputFormat: outputFormat,
+                        dataMode: gdmd,
+                        isPPTC: false);
+                  },
+                );
+              },
+              itemCount: courses.length,
+            );
+          },
+        ),
+        // child: FirestoreListView(
+        //   query: DatabaseService.FranchiseCollection.where('centre_name',
+        //       isEqualTo: controller.state.franchiseName),
+        //   itemBuilder: (context, doc) {
+        //     final item = doc.data();
+        //     return ListTile(
+        //       title: Text(item['course']),
+        //       onTap: () async {
+        //         await PdfApi().generateDocument(
+        //             context: context,
+        //             controller: controller,
+        //             course: item['course'],
+        //             orgName: controller.state.franchiseName!,
+        //             pgMode: pgmd,
+        //             outputFormat: outputFormat,
+        //             dataMode: gdmd,
+        //             isPPTC: false);
+        //       },
+        //     );
+        //   },
+        // ),
+      ));
     },
     style: ElevatedButton.styleFrom(
       fixedSize: isMobile

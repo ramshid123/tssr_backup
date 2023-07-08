@@ -265,7 +265,7 @@ Widget FranchiseCard(
       }
     },
     direction: data['isAdmin'] == 'false'
-        ? DismissDirection.horizontal
+        ? DismissDirection.endToStart
         : DismissDirection.endToStart,
     child: Container(
       margin: EdgeInsets.symmetric(vertical: 10),

@@ -4,6 +4,7 @@ import 'package:tssr_ctrl/pages/ADMIN/T%20Store(admin)/books/tbooks_index.dart';
 import 'package:tssr_ctrl/pages/ADMIN/T%20Store(admin)/view.dart';
 import 'package:tssr_ctrl/pages/ADMIN/TSSC/TSSC%20View/tsscpage_index.dart';
 import 'package:tssr_ctrl/pages/ADMIN/TSSC/tssc_view.dart';
+import 'package:tssr_ctrl/pages/ADMIN/notification_admin/notificationsadmin_index.dart';
 import 'package:tssr_ctrl/pages/ADMIN/report_/report_view.dart';
 import 'package:tssr_ctrl/pages/ADMIN/study_centre/franchise_upload/franchiseupload_index.dart';
 import 'package:tssr_ctrl/pages/ADMIN/TSSR/hall%20tkt%20View/hallticketpage_index.dart';
@@ -16,13 +17,14 @@ import 'package:tssr_ctrl/pages/FRANCHISE/T%20store%20page/tstorepage_index.dart
 import 'package:tssr_ctrl/pages/ADMIN/TSSR/result View/resultview_index.dart';
 import 'package:tssr_ctrl/pages/FRANCHISE/home(FR)/homefr_index.dart';
 import 'package:tssr_ctrl/pages/FRANCHISE/my_courses/mycourses_index.dart';
+import 'package:tssr_ctrl/pages/FRANCHISE/notification_fr/view.dart';
 import 'package:tssr_ctrl/pages/FRANCHISE/order%20success%20Page/ordersuccess_index.dart';
 import 'package:tssr_ctrl/pages/FRANCHISE/report(FR)/reportfranchise_index.dart';
 import 'package:tssr_ctrl/pages/FRANCHISE/student_upload/studentupload_index.dart';
 import 'package:tssr_ctrl/pages/profile/profile_index.dart';
 import 'package:tssr_ctrl/pages/ADMIN/TSSR/result upload/resultupload_index.dart';
 import 'package:tssr_ctrl/pages/splash_screen/splash_screen.dart';
-import 'package:tssr_ctrl/test.dart';
+import 'package:tssr_ctrl/app_update.dart';
 import 'package:tssr_ctrl/test_page/testpage_index.dart';
 import 'names.dart';
 import 'package:tssr_ctrl/pages/login/loginpage_index.dart';
@@ -187,6 +189,15 @@ class AppRoutes {
       name: AppRouteNames.RESULT_VIEW,
       page: () => ResultViewPage(),
       binding: ResultViewBinding(),
+    ),
+    GetPage(
+      name: AppRouteNames.NOTIFICATION_ADMIN,
+      page: () => NotificationsAdminPage(),
+      binding: NotificationsAdminBinding(),
+    ),
+    GetPage(
+      name: AppRouteNames.NOTIFICATION_CLIENT,
+      page: () => NotificationsClientPage(),
     ),
     GetPage(
       name: AppRouteNames.SPLASH_SCREEN,

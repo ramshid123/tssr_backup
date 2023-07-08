@@ -1,9 +1,12 @@
+import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tssr_ctrl/models/time_api_model.dart';
 import 'package:tssr_ctrl/services/authentication_service.dart';
 import 'package:tssr_ctrl/services/database_service.dart';
 import 'franchiseupload_index.dart';
+import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FranchiseUploadController extends GetxController {
@@ -114,22 +117,26 @@ class FranchiseUploadController extends GetxController {
         final user = await AuthService.auth.createUserWithEmailAndPassword(
             email: state.email.text.trim(),
             password: state.password.text.trim());
-        print(user.user!.uid);
+        print('auth created');
 
         final newDoc = DatabaseService.FranchiseCollection.doc();
+        final atcCode = decimalToBase36();
+        print('starting uploading data');
         await DatabaseService.FranchiseCollection.doc(newDoc.id).set({
           'uploader': AuthService.auth.currentUser!.uid,
+          'current_reg_no': '10000',
           'uid': user.user!.uid,
           'doc_id': newDoc.id,
           'email': state.email.text,
           'password': state.password.text,
-          'atc': state.atc.value.text,
+          // 'atc': state.atc.value.text,
+          'atc': atcCode,
           'centre_head': state.centre_head.value.text,
           'centre_name': state.centre_name.value.text,
           'district': state.district.value.text,
           'place': state.place.value.text,
           'renewal': state.renewal.value.text,
-          'courses': state.SelectedCourses.value,
+          'courses': state.SelectedCourses,
           'isAdmin': 'false',
         }).then((value) {
           state.email.clear();
@@ -144,7 +151,7 @@ class FranchiseUploadController extends GetxController {
           state.courseList = [''];
           state.courseLength.value = 1;
           state.currentStep.value = 0;
-          print('done');
+          print('uploaded franchise data');
         });
       }
     } on FirebaseAuthException catch (e) {
@@ -183,4 +190,20 @@ class FranchiseUploadController extends GetxController {
       state.isLoading.value = false;
     }
   }
+}
+
+String decimalToBase36() {
+  final digits = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+  DateTime now = DateTime.now();
+  var seconds = now.millisecondsSinceEpoch ~/ 1000;
+
+  String base36Value = '';
+  while (seconds > 0) {
+    int remainder = seconds % 36;
+    seconds = seconds ~/ 36;
+    base36Value = digits[remainder] + base36Value;
+  }
+
+  return base36Value;
 }

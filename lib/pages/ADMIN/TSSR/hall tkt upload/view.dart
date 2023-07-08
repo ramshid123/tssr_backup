@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:get/get.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
 import 'package:tssr_ctrl/pages/ADMIN/TSSR/hall%20tkt%20upload/controller.dart';
+import 'package:tssr_ctrl/services/excel_service.dart';
 import 'package:tssr_ctrl/widgets/app_bar.dart';
 import 'package:tssr_ctrl/widgets/tssr.dart';
 
@@ -110,8 +111,7 @@ class HallTicketUploadPage extends GetView<HallTicketUploadController> {
                                             fixedSize: Size(Get.width, 50),
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
-                                                    BorderRadius.circular(
-                                                        10))),
+                                                    BorderRadius.circular(10))),
                                         child: Text('Submit')),
                                 SizedBox(height: 30),
                               ],
@@ -123,7 +123,29 @@ class HallTicketUploadPage extends GetView<HallTicketUploadController> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              SizedBox(height: 100),
+                              SizedBox(height: 50),
+                              Text(
+                                'Download the Dummy or Model of Excel sheet which is to be uploaded',
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: 10),
+                              ElevatedButton(
+                                onPressed: () async => await ExcelService()
+                                    .createSkeletonExcelFiles(
+                                        titles: [
+                                      'admission_no',
+                                      'name',
+                                      'course',
+                                      'study_centre',
+                                      'exam_centre',
+                                      'exam_date',
+                                      'exam_time',
+                                    ],
+                                        fileName: 'HallTicket_Skeleton',
+                                        context: context),
+                                child: Text('Download '),
+                              ),
+                              SizedBox(height: 50),
                               Text(
                                 'Select the Excel file with .xlsx extension. The sheet should be properly structured accordingly.',
                                 textAlign: TextAlign.center,

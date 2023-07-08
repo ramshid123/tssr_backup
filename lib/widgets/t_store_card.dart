@@ -22,13 +22,13 @@ Widget TStoreCard(Map<String, dynamic> doc) {
         children: [
           Container(
             height: 100,
-            width: Get.width / 6 - 40,
+            width: Get.width / 3 - 40,
             decoration: BoxDecoration(
                 color: Colors.black,
                 borderRadius: BorderRadius.circular(20),
                 image: DecorationImage(
                   image: AssetImage('assets/book.png'),
-                  fit: BoxFit.cover,
+                  fit: BoxFit.fill,
                 )),
           ),
           SizedBox(width: 20),

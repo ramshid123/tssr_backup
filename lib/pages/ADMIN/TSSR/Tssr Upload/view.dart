@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
+import 'package:tssr_ctrl/services/excel_service.dart';
 import 'package:tssr_ctrl/widgets/tssr.dart';
 import 'tssruploadpage_index.dart';
 import 'package:tssr_ctrl/widgets/app_bar.dart';
@@ -113,8 +114,7 @@ class TssrUploadPage extends GetView<TssrUploadPageController> {
                                             fixedSize: Size(Get.width, 50),
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
-                                                    BorderRadius.circular(
-                                                        10))),
+                                                    BorderRadius.circular(10))),
                                         child: Text('Submit')),
                                 SizedBox(height: 30),
                               ],
@@ -126,7 +126,30 @@ class TssrUploadPage extends GetView<TssrUploadPageController> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              SizedBox(height: 100),
+                              SizedBox(height: 50),
+                              Text(
+                                'Download the Dummy or Model of Excel sheet which is to be uploaded',
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: 10),
+                              ElevatedButton(
+                                onPressed: () async => await ExcelService()
+                                    .createSkeletonExcelFiles(
+                                        titles: [
+                                      'register_no',
+                                      'name',
+                                      'course',
+                                      'study_centre',
+                                      'duration',
+                                      'exam_date',
+                                      'result',
+                                      'grade',
+                                    ],
+                                        fileName: 'TSSR_Data_Skeleton',
+                                        context: context),
+                                child: Text('Download '),
+                              ),
+                              SizedBox(height: 50),
                               Text(
                                 'Select the Excel file with .xlsx extension. The sheet should be properly structured accordingly.',
                                 textAlign: TextAlign.center,

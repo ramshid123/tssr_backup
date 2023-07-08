@@ -20,6 +20,7 @@ class AppRouteNames {
   static final COURSES_ADMIN = '/courses_admin';
   static final RESULT_UPLOAD = '/result_upload';
   static final RESULT_VIEW = '/result_view';
+  static final NOTIFICATION_ADMIN = '/notifications_admin';
 
   //franchise
   static final HOME_FR = '/home_fr';
@@ -30,6 +31,7 @@ class AppRouteNames {
   static final T_STORE_ITEM_FR = '/t_store_item_fr';
   static final ORDER_SUCCESS = '/order_success';
   static final MY_COURSES_PAGE = '/my_courses';
+  static final NOTIFICATION_CLIENT = '/notifications';
 
   //others
   static final LOGIN = '/login';

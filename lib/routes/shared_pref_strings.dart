@@ -10,4 +10,5 @@ class SharedPrefStrings {
   static final String DOC_ID = 'doc_id';
   static final String RENEWAL = 'renewal';
   static final String COURSES = 'courses';
+  static final String VERSION = 'version';
 }

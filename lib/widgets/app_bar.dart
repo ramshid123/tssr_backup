@@ -13,11 +13,7 @@ PreferredSizeWidget CustomAppBar(String title) {
         fontSize: 25,
       ),
     ),
-    actions: [
-      CircleAvatar(
-        backgroundColor: Colors.white,
-      ),
-    ],
+    actions: [],
   );
 }
 
@@ -33,10 +29,6 @@ PreferredSizeWidget CustomAppBarForTstore(String title) {
         fontSize: 25,
       ),
     ),
-    actions: [
-      CircleAvatar(
-        backgroundColor: Colors.white,
-      ),
-    ],
+    actions: [],
   );
 }

@@ -16,7 +16,7 @@ class FranchisePage extends GetView<FranchisePageController> {
       bool isMobile = Get.width <= 768 ? true : false;
       return Scaffold(
         backgroundColor: Colors.grey[100],
-        appBar: isMobile ? CustomAppBar('Franchise') : null,
+        appBar: CustomAppBar('Franchise'),
         body: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverAppBar(

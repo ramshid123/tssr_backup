@@ -16,7 +16,8 @@ class TOrdersPage extends GetView<TOrdersController> {
       bool isMobile = Get.width <= 768 ? true : false;
       return Scaffold(
         backgroundColor: Colors.grey[100],
-        appBar: isMobile ? CustomAppBar('TStore') : null,
+        // appBar: isMobile ? CustomAppBar('TStore') : null,
+        appBar: CustomAppBar('TStore'),
         body: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverAppBar(

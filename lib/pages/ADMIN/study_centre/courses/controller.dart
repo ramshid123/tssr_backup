@@ -55,7 +55,7 @@ class CoursesController extends GetxController {
                         final newDoc = DatabaseService.CourseCollection.doc();
                         await DatabaseService.CourseCollection.doc(newDoc.id)
                             .set({
-                          'course': state.courseName.text,
+                          'course': state.courseName.text.toUpperCase(),
                           'duration': state.courseDuration.text,
                           'doc_id': newDoc.id,
                         }).then((value) {
