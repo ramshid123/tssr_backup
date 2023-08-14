@@ -1,10 +1,15 @@
+import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
 import 'package:tssr_ctrl/pages/FRANCHISE/student_upload/controller.dart';
+import 'package:tssr_ctrl/routes/shared_pref_strings.dart';
+import 'package:tssr_ctrl/services/database_service.dart';
 import 'package:tssr_ctrl/services/excel_service.dart';
 import 'package:tssr_ctrl/widgets/app_bar.dart';
 import 'package:tssr_ctrl/widgets/tssc.dart';
@@ -137,11 +142,17 @@ class StudentUpload extends GetView<StudentUploadController> {
                                     'Course batch'),
                                 SizedBox(height: 30),
                                 kPhotoSelectionButton(
-                                    buttonText: 'Select profile photo',
+                                    context: context,
+                                    buttonText: 'Upload profile photo',
+                                    compressedFile:
+                                        controller.state.photo_compressed,
                                     file: controller.state.photo_path),
                                 SizedBox(height: 30),
                                 kPhotoSelectionButton(
-                                    buttonText: 'Select SSLC photo',
+                                    context: context,
+                                    buttonText: 'Upload SSLC Certificate',
+                                    compressedFile:
+                                        controller.state.sslc_compressed,
                                     file: controller.state.sslc_path),
                                 SizedBox(height: 30),
                                 CheckboxMenuButton(
@@ -174,7 +185,8 @@ class StudentUpload extends GetView<StudentUploadController> {
                                       )
                                     : ElevatedButton(
                                         onPressed: () async {
-                                          await controller.manualDataSubmit();
+                                          await controller
+                                              .manualDataSubmit(context);
                                         },
                                         style: ElevatedButton.styleFrom(
                                             fixedSize: Size(Get.width, 50),
@@ -239,7 +251,7 @@ class StudentUpload extends GetView<StudentUploadController> {
                                     : ElevatedButton(
                                         onPressed: () async {
                                           await controller
-                                              .selectAndUploadExcel();
+                                              .selectAndUploadExcel(context);
                                         },
                                         style: ElevatedButton.styleFrom(
                                             fixedSize: Size(Get.width, 60),
@@ -286,11 +298,17 @@ class StudentUpload extends GetView<StudentUploadController> {
   }
 
   Widget kPhotoSelectionButton(
-      {required Rx<PlatformFile> file, required String buttonText}) {
+      {required Rx<PlatformFile> file,
+      required String buttonText,
+      required BuildContext context,
+      required Rx<Uint8List> compressedFile}) {
     return Row(
       children: [
         ElevatedButton(
-          onPressed: () async => await controller.selectPhoto(file: file),
+          onPressed: () async {
+            await controller.selectPhoto(
+                file: file, fileBytes: compressedFile, context: context);
+          },
           child: Text(buttonText),
         ),
         SizedBox(width: 10),

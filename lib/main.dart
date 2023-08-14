@@ -4,8 +4,8 @@ import 'package:tssr_ctrl/app_update.dart';
 import 'package:tssr_ctrl/services/authentication_service.dart';
 
 import 'routes/route.dart';
-// import 'package:flutter_web_plugins/flutter_web_plugins.dart'
-//     as web_plugin; // import for web developement only
+import 'package:flutter_web_plugins/flutter_web_plugins.dart'
+    as web_plugin; // import for web developement only
 import 'routes/names.dart';
 import 'package:flutter/material.dart';
 import 'firebase_options.dart';
@@ -20,12 +20,14 @@ import 'package:get/get.dart';
 //  -command the appUpdate function in the GetMaterial Widget
 //  -uncommand filepickerweb import in Franchise->studentUpload->controller.dart
 //  -uncommand the last part of picking files in Franchise->studentUpload->controller.dart
+//  -uncommand filepickerweb import in Franchise->studentView->controller.dart
+//  -uncommand the filePicker part in Franchise->studentView->controller.dart line:113
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // kIsWeb
-  //     ? web_plugin.setUrlStrategy(web_plugin.PathUrlStrategy())
-  //     : null; // function for web only
+  kIsWeb
+      ? web_plugin.setUrlStrategy(web_plugin.PathUrlStrategy())
+      : null; // function for web only
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -39,9 +41,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       onReady: () async {
-        if (Platform.isAndroid) {
-          await initPlatformState();   // function for android only
-        }
+        // if (Platform.isAndroid) {
+        //   await initPlatformState();   // function for android only
+        // }
         await AuthService().listenForUserChange();
       },
       theme: ThemeData(

@@ -116,15 +116,15 @@ Widget ResultCard(var data, controller, BuildContext context) {
                             await DatabaseService.ResultCollection.doc(
                                     data['doc_id'])
                                 .update({
-                              'name': homectrl.state.name.text,
+                              'name': homectrl.state.name.text.toUpperCase(),
                               'reg_no': homectrl.state.reg_no.text,
-                              'result': homectrl.state.result.text,
-                              'course': homectrl.state.course.text,
-                              'duration': homectrl.state.duration.text,
-                              'study_centre': homectrl.state.study_centre.text,
-                              'exam_centre': homectrl.state.exam_centre.text,
+                              'result': homectrl.state.result.text.toUpperCase(),
+                              'course': homectrl.state.course.text.toUpperCase(),
+                              'duration': homectrl.state.duration.text.toUpperCase(),
+                              'study_centre': homectrl.state.study_centre.text.toUpperCase(),
+                              'exam_centre': homectrl.state.exam_centre.text.toUpperCase(),
                               'exam_date': homectrl.state.exam_date.text,
-                              'grade': homectrl.state.grade.text,
+                              'grade': homectrl.state.grade.text.toUpperCase(),
                             }).then((value) => Navigator.of(context).pop());
                           } catch (e) {
                             print(e);
@@ -168,9 +168,13 @@ Widget ResultCard(var data, controller, BuildContext context) {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    data['name'],
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+                  SizedBox(
+                    width: Get.width - 120,
+                    child: Text(
+                      data['name'],
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+                    ),
                   ),
                   Text(data['reg_no'], style: TextStyle(fontSize: 18)),
                 ],
@@ -295,8 +299,9 @@ Widget CustomTextForm({
                     onPressed: () async {
                       final date = await showDatePicker(
                         context: context!,
+                        initialDatePickerMode: DatePickerMode.year,
                         initialDate: DateTime.now(),
-                        firstDate: DateTime(2001),
+                        firstDate: DateTime(1923),
                         lastDate: DateTime(2050),
                       );
                       if (date != null) {
@@ -390,7 +395,8 @@ Widget EditBoxFormField(String hint, TextEditingController ctrl, String value) {
                         final date = await showDatePicker(
                           context: context,
                           initialDate: DateTime.now(),
-                          firstDate: DateTime(2001),
+                          initialDatePickerMode: DatePickerMode.year,
+                          firstDate: DateTime(1923),
                           lastDate: DateTime(2050),
                         );
                         if (date != null) {

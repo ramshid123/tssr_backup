@@ -18,6 +18,7 @@ class FranchiseUploadController extends GetxController {
     // TODO: implement onReady
     super.onReady();
     state.courseLength.value = state.courseList.length;
+    state.district.text = 'Select district';
   }
 
   void increamentTextForms() {
@@ -114,44 +115,63 @@ class FranchiseUploadController extends GetxController {
       state.isLoading.value = true;
       final isConnected = await DatabaseService.checkInternetConnection();
       if (isConnected) {
+        final currentScRegNoSnapshot =
+            await DatabaseService.MetaInformations.get();
+        final currentScRegNo =
+            currentScRegNoSnapshot.docs.first.data()['sc_reg_no'];
+
         final user = await AuthService.auth.createUserWithEmailAndPassword(
-            email: state.email.text.trim(),
+            email: state.email.text.toLowerCase().trim(),
             password: state.password.text.trim());
         print('auth created');
 
         final newDoc = DatabaseService.FranchiseCollection.doc();
-        final atcCode = decimalToBase36();
+        // final atcCode = decimalToBase36();
+        final atcCode =
+            '${getFirstThreeLetters(state.centre_name.text).toUpperCase()}\\${state.district.text.substring(0, 3).toUpperCase()}\\${currentScRegNo.toString().substring(0, 3)}\\${currentScRegNo.toString().substring(3)}';
         print('starting uploading data');
         await DatabaseService.FranchiseCollection.doc(newDoc.id).set({
           'uploader': AuthService.auth.currentUser!.uid,
-          'current_reg_no': '10000',
+          'current_reg_no': '10235',
           'uid': user.user!.uid,
           'doc_id': newDoc.id,
-          'email': state.email.text,
+          'email': state.email.text.toLowerCase(),
           'password': state.password.text,
           // 'atc': state.atc.value.text,
           'atc': atcCode,
-          'centre_head': state.centre_head.value.text,
-          'centre_name': state.centre_name.value.text,
-          'district': state.district.value.text,
-          'place': state.place.value.text,
+          'centre_head': state.centre_head.value.text.toUpperCase(),
+          'centre_name': state.centre_name.value.text.toUpperCase(),
+          'district': state.district.value.text.toUpperCase(),
+          'place': state.place.value.text.toUpperCase(),
           'renewal': state.renewal.value.text,
           'courses': state.SelectedCourses,
           'isAdmin': 'false',
-        }).then((value) {
-          state.email.clear();
-          state.password.clear();
-          state.atc.clear();
-          state.centre_head.clear();
-          state.centre_name.clear();
-          state.district.clear();
-          state.place.clear();
-          state.renewal.clear();
+        }).then((value) async {
+          await DatabaseService.MetaInformations.doc(
+                  currentScRegNoSnapshot.docs.first.id)
+              .update({
+            'sc_reg_no': int.parse(currentScRegNo.toString()) + 1,
+          }).then((value) {
+            state.email.clear();
+            state.password.clear();
+            state.atc.clear();
+            state.centre_head.clear();
+            state.centre_name.clear();
+            state.district.clear();
+            state.place.clear();
+            state.renewal.clear();
 
-          state.courseList = [''];
-          state.courseLength.value = 1;
-          state.currentStep.value = 0;
-          print('uploaded franchise data');
+            state.courseList = [''];
+            state.courseLength.value = 1;
+            state.currentStep.value = 0;
+            print('uploaded franchise data');
+            Get.showSnackbar(GetSnackBar(
+              title: 'Success',
+              message: 'Franchise created successfully.',
+              backgroundColor: Colors.green,
+              duration: 3.seconds,
+            ));
+          });
         });
       }
     } on FirebaseAuthException catch (e) {
@@ -190,6 +210,30 @@ class FranchiseUploadController extends GetxController {
       state.isLoading.value = false;
     }
   }
+
+  // Future developerSideAutomaticRegnoAssignmentFunction() async {
+  //   try {
+  //     final sc_list_snapshot = await DatabaseService.FranchiseCollection.get();
+  //     final sc_list = sc_list_snapshot.docs;
+  //     // int currentRegNo = 13001;
+  //     for (var sc in sc_list) {
+  //       if (sc.data()['atc'] != 'ADMIN') {
+  //         await DatabaseService.FranchiseCollection.doc(sc.id).update({
+  //           'centre_name': sc.data()['centre_name'].toString().toUpperCase(),
+  //           'centre_head': sc.data()['centre_head'].toString().toUpperCase(),
+  //           'email': sc.data()['email'].toString().toLowerCase(),
+  //           'district': sc.data()['district'].toString().toUpperCase(),
+  //           'place': sc.data()['place'].toString().toUpperCase(),
+  //         });
+  //         // currentRegNo++;
+  //       }
+  //     }
+  //     print('done');
+  //     // print(currentRegNo);
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 }
 
 String decimalToBase36() {
@@ -206,4 +250,16 @@ String decimalToBase36() {
   }
 
   return base36Value;
+}
+
+String getFirstThreeLetters(String input) {
+  String sanitizedInput = input.replaceAll(RegExp(r'[^a-zA-Z]+'), '');
+
+  if (sanitizedInput.length < 3) {
+    while (sanitizedInput.length < 3) {
+      sanitizedInput += 'A';
+    }
+  }
+
+  return sanitizedInput.substring(0, 3);
 }

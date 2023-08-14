@@ -28,8 +28,10 @@ class FranchisePageController extends GetxController {
   void searchByString(String searchString) {
     state.query.value =
         DatabaseService.FranchiseCollection.orderBy('centre_name')
-            .where('centre_name', isGreaterThanOrEqualTo: '$searchString')
-            .where('centre_name', isLessThanOrEqualTo: '$searchString\uf8ff');
+            .where('centre_name',
+                isGreaterThanOrEqualTo: '${searchString.toUpperCase()}')
+            .where('centre_name',
+                isLessThanOrEqualTo: '${searchString.toUpperCase()}\uf8ff');
 
     // .where('reg_no', isEqualTo: '$searchString')
     // .where('reg_no', isEqualTo: '$searchString\uf8ff');
@@ -64,8 +66,10 @@ class FranchisePageController extends GetxController {
 
   Future searchCourseUsingGivenString(String searchString) async {
     state.allCourseQuery = DatabaseService.CourseCollection.orderBy('course')
-        .where('course', isGreaterThanOrEqualTo: '$searchString')
-        .where('course', isLessThanOrEqualTo: '$searchString\uf8ff');
+        .where('course',
+            isGreaterThanOrEqualTo: '${searchString.toUpperCase()}')
+        .where('course',
+            isLessThanOrEqualTo: '${searchString.toUpperCase()}\uf8ff');
     update();
   }
 

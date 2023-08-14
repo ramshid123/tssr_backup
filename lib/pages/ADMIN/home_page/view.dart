@@ -134,7 +134,7 @@ class HomePage extends GetView<HomePageController> {
                                             ),
                                             SizedBox(width: 20),
                                             SizedBox(
-                                              width: Get.width / 2 - 20,
+                                              width: Get.width / 2 - 25,
                                               child: Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,

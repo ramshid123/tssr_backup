@@ -32,7 +32,8 @@ class TStorePage extends GetView<TStorePageController> {
           ],
           body: Obx(() {
             return Padding(
-              padding: isMobile?EdgeInsets.zero:EdgeInsets.symmetric(horizontal: Get.width/20   ),
+              // padding: isMobile?EdgeInsets.zero:EdgeInsets.symmetric(horizontal: Get.width/20   ),
+              padding: EdgeInsets.zero,
               child: FirestoreListView(
                 query: controller.state.query.value,
                 emptyBuilder: (context) => Center(
@@ -45,7 +46,7 @@ class TStorePage extends GetView<TStorePageController> {
                   ),
                 ),
                 itemBuilder: (context, doc) {
-                  return TStoreCard(doc.data());
+                  return TStoreCard(doc.data(), isMobile);
                 },
                 pageSize: 5,
               ),

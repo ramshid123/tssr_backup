@@ -15,6 +15,7 @@ class DatabaseService {
   static final ResultCollection = db.collection('Results');
   static final DeletedAccounts = db.collection('Deleted_Accounts');
   static final Notifications = db.collection('Notifications');
+  static final MetaInformations = db.collection('MetaInfo');
 
   static Future<bool> checkInternetConnection() async {
     try {

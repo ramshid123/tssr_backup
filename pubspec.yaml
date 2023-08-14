@@ -45,6 +45,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_autoupdate: ^1.0.0
+  flutter_image_compress: ^2.0.3
   get: ^4.6.5
   http: ^0.13.3
   jsaver: ^1.2.0

@@ -13,7 +13,7 @@ class TsscPage extends GetView<TsscPageController> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, c) {
-      bool isMobile = Get.width <= 768 ? true : false;
+      // bool isMobile = Get.width <= 768 ? true : false;
       return Scaffold(
         backgroundColor: Colors.grey[100],
         // appBar: isMobile ? CustomAppBar('TSSC') : null,
@@ -34,9 +34,10 @@ class TsscPage extends GetView<TsscPageController> {
           ],
           body: Obx(() {
             return Padding(
-              padding: isMobile
-                  ? EdgeInsets.zero
-                  : EdgeInsets.symmetric(horizontal: Get.width / 20),
+              // padding: isMobile
+              //     ? EdgeInsets.zero
+              //     : EdgeInsets.symmetric(horizontal: Get.width / 20),
+              padding: EdgeInsets.zero,
               child: FirestoreListView(
                 query: controller.state.query.value,
                 emptyBuilder: (context) => Center(

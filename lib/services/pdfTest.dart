@@ -38,13 +38,13 @@ class PDFTestView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final s = await DatabaseService.tsscCollection.get();
-          // s.docs.forEach((element) {print(element.data());});
-          print(s.docs);
-        },
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () async {
+      //     final s = await DatabaseService.tsscCollection.get();
+      //     // s.docs.forEach((element) {print(element.data());});
+      //     print(s.docs);
+      //   },
+      // ),
       body: Column(
         children: [
           Container(

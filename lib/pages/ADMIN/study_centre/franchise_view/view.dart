@@ -13,7 +13,7 @@ class FranchisePage extends GetView<FranchisePageController> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, c) {
-      bool isMobile = Get.width <= 768 ? true : false;
+      // bool isMobile = Get.width <= 768 ? true : false;
       return Scaffold(
         backgroundColor: Colors.grey[100],
         appBar: CustomAppBar('Franchise'),
@@ -33,9 +33,10 @@ class FranchisePage extends GetView<FranchisePageController> {
           ],
           body: Obx(() {
             return Padding(
-              padding: isMobile
-                  ? EdgeInsets.zero
-                  : EdgeInsets.symmetric(horizontal: Get.width / 20),
+              // padding: isMobile
+              //     ? EdgeInsets.zero
+              //     : EdgeInsets.symmetric(horizontal: Get.width / 20),
+              padding: EdgeInsets.zero,
               child: FirestoreListView(
                 query: controller.state.query.value,
                 emptyBuilder: (context) => Center(

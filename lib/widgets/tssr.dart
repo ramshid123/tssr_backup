@@ -7,252 +7,256 @@ import 'package:tssr_ctrl/services/database_service.dart';
 
 Widget TssrCard(var data, controller, BuildContext context) {
   final key = GlobalKey();
-  return Dismissible(
-    key: key,
-    background: Container(
-      color: Colors.red,
-      child: Row(
-        children: [
-          Icon(
-            Icons.delete,
-            size: 100,
-            color: Colors.white,
-          ),
-          Spacer(),
-        ],
-      ),
-    ),
-    secondaryBackground: Container(
-      color: Colors.blue,
-      child: Row(
-        children: [
-          Spacer(),
-          Icon(
-            Icons.edit,
-            size: 100,
-            color: Colors.white,
-          ),
-        ],
-      ),
-    ),
-    onDismissed: (val) async {
-      try {
-        await DatabaseService.tssrCollection.doc(data['doc_id']).delete();
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red,
-            duration: 10.seconds,
-            content: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Undo the delete',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-                IconButton(
-                    color: Colors.white,
-                    onPressed: () async {
-                      await DatabaseService.tssrCollection
-                          .doc(data['doc_id'])
-                          .set({
-                        'doc_id': data['doc_id'],
-                        'name': data['name'],
-                        'reg_no': data['reg_no'],
-                        'result': data['result'],
-                        'course': data['course'],
-                        'duration': data['duration'],
-                        'study_centre': data['study_centre'],
-                        'exam_date': data['exam_date'],
-                        'grade': data['grade'],
-                      }).then((value) => ScaffoldMessenger.of(context)
-                              .hideCurrentSnackBar());
-                    },
-                    icon: Icon(Icons.undo))
-              ],
-            ),
-          ),
-        );
-      } catch (e) {
-        print(e);
-      }
-    },
-    confirmDismiss: (direction) async {
-      if (direction == DismissDirection.endToStart) {
-        final homectrl = TssrPageController();
-        await Get.bottomSheet(
-          Container(
-            padding: EdgeInsets.all(20),
-            height: Get.height * 0.75,
-            color: Color.fromRGBO(255, 255, 255, 1),
-            child: SingleChildScrollView(
-              child: Form(
-                key: homectrl.state.editFormKey,
+  return GestureDetector(
+    onTap: () {
+      Get.bottomSheet(
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(40), topRight: Radius.circular(40))),
+          child: Stack(
+            children: [
+              SingleChildScrollView(
                 child: Column(
                   children: [
-                    EditBoxFormField('Name', homectrl.state.name, data['name']),
-                    EditBoxFormField(
-                        'Register No', homectrl.state.reg_no, data['reg_no']),
-                    EditBoxFormField(
-                        'Result', homectrl.state.result, data['result']),
-                    EditBoxFormField(
-                        'Course', homectrl.state.course, data['course']),
-                    EditBoxFormField(
-                        'Duration', homectrl.state.duration, data['duration']),
-                    EditBoxFormField('Study Centre',
-                        homectrl.state.study_centre, data['study_centre']),
-                    EditBoxFormField('Exam Date', homectrl.state.exam_date,
-                        data['exam_date']),
-                    EditBoxFormField(
-                        'Grade', homectrl.state.grade, data['grade']),
-                    SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () async {
-                        if (homectrl.state.editFormKey.currentState!
-                            .validate()) {
-                          try {
-                            await DatabaseService.tssrCollection
-                                .doc(data['doc_id'])
-                                .update({
-                              'name': homectrl.state.name.text,
-                              'reg_no': homectrl.state.reg_no.text,
-                              'result': homectrl.state.result.text,
-                              'course': homectrl.state.course.text,
-                              'duration': homectrl.state.duration.text,
-                              'study_centre': homectrl.state.study_centre.text,
-                              'exam_date': homectrl.state.exam_date.text,
-                              'grade': homectrl.state.grade.text,
-                            }).then((value) => Navigator.of(context).pop());
-                          } catch (e) {
-                            print(e);
-                          }
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                          fixedSize: Size(Get.width, 50),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20))),
-                      child: Text('Submit'),
+                    SizedBox(height: 30),
+                    Text(
+                      'Student details',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
+                    SizedBox(height: 20),
+                    BottomSheetItem('Name', data['name']),
+                    BottomSheetItem('Register No', data['reg_no']),
+                    BottomSheetItem('Result', data['result']),
+                    BottomSheetItem('Course', data['course']),
+                    BottomSheetItem('Duration', data['duration']),
+                    BottomSheetItem('Study Centre', data['study_centre']),
+                    BottomSheetItem('Exam Data', data['exam_date']),
+                    BottomSheetItem('Grade', data['grade']),
                   ],
                 ),
               ),
-            ),
+              Positioned(
+                right: 0,
+                top: 20,
+                child: IconButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    icon: Icon((Icons.clear))),
+              )
+            ],
           ),
-        );
-        return false;
-      } else {
-        return true;
-      }
+        ),
+      );
     },
-    direction: DismissDirection.horizontal,
-    child: Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      width: Get.width,
-      decoration: BoxDecoration(color: Colors.white, boxShadow: [
-        BoxShadow(
-            spreadRadius: 1,
-            blurRadius: 5,
-            color: Colors.grey,
-            offset: Offset(0, 1))
-      ]),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    child: Dismissible(
+      key: key,
+      background: Container(
+        color: Colors.red,
+        child: Row(
+          children: [
+            Icon(
+              Icons.delete,
+              size: 100,
+              color: Colors.white,
+            ),
+            Spacer(),
+          ],
+        ),
+      ),
+      secondaryBackground: Container(
+        color: Colors.blue,
+        child: Row(
+          children: [
+            Spacer(),
+            Icon(
+              Icons.edit,
+              size: 100,
+              color: Colors.white,
+            ),
+          ],
+        ),
+      ),
+      onDismissed: (val) async {
+        try {
+          await DatabaseService.tssrCollection.doc(data['doc_id']).delete();
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.red,
+              duration: 10.seconds,
+              content: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    data['name'],
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+                    'Undo the delete',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
                   ),
-                  Text(data['reg_no'], style: TextStyle(fontSize: 18)),
-                ],
-              ),
-              Row(
-                children: [
-                  Text(data['result'],
-                      style: TextStyle(
-                          fontSize: 18,
-                          color: data['result']
-                                  .toString()
-                                  .toLowerCase()
-                                  .contains('pass')
-                              ? Colors.green
-                              : Colors.red)),
                   IconButton(
-                    onPressed: () {
-                      Get.bottomSheet(
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(40),
-                                  topRight: Radius.circular(40))),
-                          child: Stack(
-                            children: [
-                              SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    SizedBox(height: 30),
-                                    Text(
-                                      'Student details',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    SizedBox(height: 20),
-                                    BottomSheetItem('Name', data['name']),
-                                    BottomSheetItem(
-                                        'Register No', data['reg_no']),
-                                    BottomSheetItem('Result', data['result']),
-                                    BottomSheetItem('Course', data['course']),
-                                    BottomSheetItem(
-                                        'Duration', data['duration']),
-                                    BottomSheetItem(
-                                        'Study Centre', data['study_centre']),
-                                    BottomSheetItem(
-                                        'Exam Data', data['exam_date']),
-                                    BottomSheetItem('Grade', data['grade']),
-                                  ],
-                                ),
-                              ),
-                              Positioned(
-                                right: 0,
-                                top: 20,
-                                child: IconButton(
-                                    onPressed: () {
-                                      Get.back();
-                                    },
-                                    icon: Icon((Icons.clear))),
-                              )
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                    icon: Icon(Icons.navigate_next),
-                  ),
+                      color: Colors.white,
+                      onPressed: () async {
+                        await DatabaseService.tssrCollection
+                            .doc(data['doc_id'])
+                            .set({
+                          'doc_id': data['doc_id'],
+                          'name': data['name'],
+                          'reg_no': data['reg_no'],
+                          'result': data['result'],
+                          'course': data['course'],
+                          'duration': data['duration'],
+                          'study_centre': data['study_centre'],
+                          'exam_date': data['exam_date'],
+                          'grade': data['grade'],
+                        }).then((value) => ScaffoldMessenger.of(context)
+                                .hideCurrentSnackBar());
+                      },
+                      icon: Icon(Icons.undo))
                 ],
               ),
-            ],
-          ),
-          Divider(),
-          Column(
-            children: [
-              TssrCardItem('Course', data['course'], 0),
-              TssrCardItem('Study Centre', data['study_centre'], 1),
-              TssrCardItem('Exam Date', data['exam_date'], 0),
-              TssrCardItem('Grade', data['grade'], 1),
-            ],
-          ),
-          SizedBox(height: 10),
-        ],
+            ),
+          );
+        } catch (e) {
+          print(e);
+        }
+      },
+      confirmDismiss: (direction) async {
+        if (direction == DismissDirection.endToStart) {
+          final homectrl = TssrPageController();
+          await Get.bottomSheet(
+            Container(
+              padding: EdgeInsets.all(20),
+              height: Get.height * 0.75,
+              color: Color.fromRGBO(255, 255, 255, 1),
+              child: SingleChildScrollView(
+                child: Form(
+                  key: homectrl.state.editFormKey,
+                  child: Column(
+                    children: [
+                      EditBoxFormField(
+                          'Name', homectrl.state.name, data['name']),
+                      EditBoxFormField(
+                          'Register No', homectrl.state.reg_no, data['reg_no']),
+                      EditBoxFormField(
+                          'Result', homectrl.state.result, data['result']),
+                      EditBoxFormField(
+                          'Course', homectrl.state.course, data['course']),
+                      EditBoxFormField('Duration', homectrl.state.duration,
+                          data['duration']),
+                      EditBoxFormField('Study Centre',
+                          homectrl.state.study_centre, data['study_centre']),
+                      EditBoxFormField('Exam Date', homectrl.state.exam_date,
+                          data['exam_date']),
+                      EditBoxFormField(
+                          'Grade', homectrl.state.grade, data['grade']),
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () async {
+                          if (homectrl.state.editFormKey.currentState!
+                              .validate()) {
+                            try {
+                              await DatabaseService.tssrCollection
+                                  .doc(data['doc_id'])
+                                  .update({
+                                'name': homectrl.state.name.text.toUpperCase(),
+                                'reg_no': homectrl.state.reg_no.text,
+                                'result': homectrl.state.result.text.toUpperCase(),
+                                'course': homectrl.state.course.text.toUpperCase(),
+                                'duration': homectrl.state.duration.text.toUpperCase(),
+                                'study_centre':
+                                    homectrl.state.study_centre.text.toUpperCase(),
+                                'exam_date': homectrl.state.exam_date.text,
+                                'grade': homectrl.state.grade.text.toUpperCase(),
+                              }).then((value) => Navigator.of(context).pop());
+                            } catch (e) {
+                              print(e);
+                            }
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                            fixedSize: Size(Get.width, 50),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20))),
+                        child: Text('Submit'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+          return false;
+        } else {
+          return true;
+        }
+      },
+      direction: DismissDirection.horizontal,
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        width: Get.width,
+        decoration: BoxDecoration(color: Colors.white, boxShadow: [
+          BoxShadow(
+              spreadRadius: 1,
+              blurRadius: 5,
+              color: Colors.grey,
+              offset: Offset(0, 1))
+        ]),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: Get.width - 120,
+                      child: Text(
+                        data['name'],
+                        style: TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    Text(data['reg_no'], style: TextStyle(fontSize: 18)),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text(data['result'],
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: data['result']
+                                    .toString()
+                                    .toLowerCase()
+                                    .contains('pass')
+                                ? Colors.green
+                                : Colors.red)),
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.navigate_next),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Divider(),
+            Column(
+              children: [
+                TssrCardItem('Course', data['course'], 0),
+                TssrCardItem('Study Centre', data['study_centre'], 1),
+                TssrCardItem('Exam Date', data['exam_date'], 0),
+                TssrCardItem('Grade', data['grade'], 1),
+              ],
+            ),
+            SizedBox(height: 10),
+          ],
+        ),
       ),
     ),
   );
@@ -290,8 +294,9 @@ Widget CustomTextForm({
                     onPressed: () async {
                       final date = await showDatePicker(
                         context: context!,
+                        initialDatePickerMode: DatePickerMode.year,
                         initialDate: DateTime.now(),
-                        firstDate: DateTime(2001),
+                        firstDate: DateTime(1923),
                         lastDate: DateTime(2050),
                       );
                       if (date != null) {
@@ -385,7 +390,8 @@ Widget EditBoxFormField(String hint, TextEditingController ctrl, String value) {
                         final date = await showDatePicker(
                           context: context,
                           initialDate: DateTime.now(),
-                          firstDate: DateTime(2001),
+                          firstDate: DateTime(1923),
+                          initialDatePickerMode: DatePickerMode.year,
                           lastDate: DateTime(2050),
                         );
                         if (date != null) {

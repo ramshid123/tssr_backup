@@ -3,6 +3,24 @@ import 'package:get/get.dart';
 import 'package:tssr_ctrl/services/database_service.dart';
 
 class FranchiseUploadState {
+  List<String> districts = [
+    'Select district',
+    'Thiruvananthapuram',
+    'Kollam',
+    'Pathanamthitta',
+    'Alappuzha',
+    'Kottayam',
+    'Idukki',
+    'Ernakulam',
+    'Thrissur',
+    'Palakkad',
+    'Malappuram',
+    'Kozhikode',
+    'Wayanad',
+    'Kannur',
+    'Kasaragod',
+  ];
+  
   final formkey1 = GlobalKey<FormState>();
   final formkey2 = GlobalKey<FormState>();
 

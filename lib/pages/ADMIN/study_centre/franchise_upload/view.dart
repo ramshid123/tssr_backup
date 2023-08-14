@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
 import 'package:tssr_ctrl/models/time_api_model.dart';
 import 'package:tssr_ctrl/pages/ADMIN/study_centre/franchise_upload/controller.dart';
+import 'package:tssr_ctrl/pages/FRANCHISE/student_upload/view.dart';
 import 'package:tssr_ctrl/services/database_service.dart';
 import 'package:tssr_ctrl/widgets/app_bar.dart';
 import 'package:tssr_ctrl/widgets/tssc.dart';
@@ -111,9 +112,8 @@ class FranchiseUploadPage extends GetView<FranchiseUploadController> {
                           hintText: 'Centre Name',
                           ctrl: controller.state.centre_name),
                       SizedBox(height: 20),
-                      CustomTextForm(
-                          hintText: 'District',
-                          ctrl: controller.state.district),
+                      DropDownListWidget(controller.state.districts,
+                          controller.state.district, 'District'),
                       SizedBox(height: 20),
                       CustomTextForm(
                           hintText: 'Place', ctrl: controller.state.place),

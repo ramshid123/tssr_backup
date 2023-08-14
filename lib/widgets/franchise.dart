@@ -105,8 +105,8 @@ Widget FranchiseCard(
                         data['centre_name']),
                     EditBoxFormField('Centre Head', homectrl.state.centre_head,
                         data['centre_head']),
-                    EditBoxFormField(
-                        'ATC Code', homectrl.state.atc, data['atc']),
+                    // EditBoxFormField(
+                    //     'ATC Code', homectrl.state.atc, data['atc']),
                     EditBoxFormField(
                         'District', homectrl.state.district, data['district']),
                     EditBoxFormField(
@@ -235,11 +235,11 @@ Widget FranchiseCard(
                             await DatabaseService.FranchiseCollection.doc(
                                     data['doc_id'])
                                 .update({
-                              'centre_name': homectrl.state.centre_name.text,
-                              'centre_head': homectrl.state.centre_head.text,
-                              'atc': homectrl.state.atc.text,
-                              'district': homectrl.state.district.text,
-                              'place': homectrl.state.place.text,
+                              'centre_name': homectrl.state.centre_name.text.toUpperCase(),
+                              'centre_head': homectrl.state.centre_head.text.toUpperCase(),
+                              // 'atc': homectrl.state.atc.text,
+                              'district': homectrl.state.district.text.toUpperCase(),
+                              'place': homectrl.state.place.text.toUpperCase(),
                               'renewal': homectrl.state.renewal.text,
                             }).then((value) => Navigator.of(context).pop());
                           } catch (e) {
@@ -286,9 +286,13 @@ Widget FranchiseCard(
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    data['centre_name'],
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+                  SizedBox(
+                    width: Get.width - 90,
+                    child: Text(
+                      data['centre_name'],
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+                    ),
                   ),
                   Text(data['atc'], style: TextStyle(fontSize: 18)),
                 ],
@@ -395,8 +399,9 @@ Widget CustomTextForm({
                     onPressed: () async {
                       final date = await showDatePicker(
                         context: context!,
+                        initialDatePickerMode: DatePickerMode.year,
                         initialDate: DateTime.now(),
-                        firstDate: DateTime(2001),
+                        firstDate: DateTime(1923),
                         lastDate: DateTime(2050),
                       );
                       if (date != null) {

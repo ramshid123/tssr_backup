@@ -107,10 +107,10 @@ Widget TsscCard(var data, TsscPageController controller, BuildContext context) {
                             await DatabaseService.tsscCollection
                                 .doc(data['doc_id'])
                                 .update({
-                              'name': homectrl.state.name.text,
+                              'name': homectrl.state.name.text.toUpperCase(),
                               'reg_no': homectrl.state.reg_no.text,
-                              'skill': homectrl.state.skill.text,
-                              'skill_centre': homectrl.state.skill_centre.text,
+                              'skill': homectrl.state.skill.text.toUpperCase(),
+                              'skill_centre': homectrl.state.skill_centre.text.toUpperCase(),
                               'exam_date': homectrl.state.exam_date.text,
                             }).then((value) => Navigator.of(context).pop());
                           } catch (e) {
@@ -155,9 +155,13 @@ Widget TsscCard(var data, TsscPageController controller, BuildContext context) {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    data['name'],
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+                  SizedBox(
+                    width: Get.width - 120,
+                    child: Text(
+                      data['name'],
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+                    ),
                   ),
                   Text(data['reg_no'], style: TextStyle(fontSize: 18)),
                 ],
@@ -261,7 +265,8 @@ Widget CustomTextForm({
                       final date = await showDatePicker(
                         context: context!,
                         initialDate: DateTime.now(),
-                        firstDate: DateTime(2001),
+                        firstDate: DateTime(1923),
+                        initialDatePickerMode: DatePickerMode.year,
                         lastDate: DateTime(2050),
                       );
                       if (date != null) {

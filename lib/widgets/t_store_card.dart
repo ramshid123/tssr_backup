@@ -4,10 +4,10 @@ import 'package:tssr_ctrl/constants/colors.dart';
 import 'package:get/get.dart';
 import 'package:tssr_ctrl/routes/names.dart';
 
-Widget TStoreCard(Map<String, dynamic> doc) {
+Widget TStoreCard(Map<String, dynamic> doc, bool isMobile) {
   return GestureDetector(
-    onTap: (){
-      Get.toNamed(AppRouteNames.T_STORE_ITEM_FR, arguments:  doc);
+    onTap: () {
+      Get.toNamed(AppRouteNames.T_STORE_ITEM_FR, arguments: doc);
     },
     child: Container(
       margin: EdgeInsets.all(10),
@@ -22,7 +22,7 @@ Widget TStoreCard(Map<String, dynamic> doc) {
         children: [
           Container(
             height: 100,
-            width: Get.width / 3 - 40,
+            width:isMobile? Get.width / 3 - 40: Get.width / 6,
             decoration: BoxDecoration(
                 color: Colors.black,
                 borderRadius: BorderRadius.circular(20),
@@ -74,7 +74,6 @@ Widget TStoreCard(Map<String, dynamic> doc) {
                       ),
                     ),
                   ),
-                 
                 ],
               ),
             ],

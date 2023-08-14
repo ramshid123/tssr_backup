@@ -51,7 +51,7 @@ class TBooksPage extends GetView<TBooksController> {
                 ),
               ),
               itemBuilder: (context, doc) {
-                return TStoreCardAdmin(context, doc.data());
+                return TStoreCardAdmin(context, doc.data(), isMobile);
               },
               pageSize: 5,
             );

@@ -19,7 +19,7 @@ Future<void> initPlatformState() async {
   final sf = await SharedPreferences.getInstance();
   final version = sf.getString(SharedPrefStrings.VERSION);
   if (version == null) {
-    await sf.setString(SharedPrefStrings.VERSION, '1.0.0');
+    await sf.setString(SharedPrefStrings.VERSION, '1.0.155');
   }
 
   // return;

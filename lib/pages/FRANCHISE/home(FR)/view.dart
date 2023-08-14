@@ -7,6 +7,8 @@ import 'package:tssr_ctrl/routes/names.dart';
 import 'package:tssr_ctrl/services/excel_service.dart';
 import 'package:tssr_ctrl/widgets/drawer.dart';
 
+import '../student_upload/controller.dart';
+
 class HomeFrPage extends GetView<HomeFrController> {
   HomeFrPage({super.key});
 
@@ -119,7 +121,7 @@ class HomeFrPage extends GetView<HomeFrController> {
                                         ),
                                         SizedBox(width: 20),
                                         SizedBox(
-                                          width: Get.width / 2 - 20,
+                                          width: Get.width / 2 - 25,
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,

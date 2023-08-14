@@ -115,11 +115,11 @@ Widget HTCard(
                             await DatabaseService.hallTKTCollection
                                 .doc(data['doc_id'])
                                 .update({
-                              'name': homectrl.state.name.text,
+                              'name': homectrl.state.name.text.toUpperCase(),
                               'admission_no': homectrl.state.admission_no.text,
-                              'course': homectrl.state.course.text,
-                              'study_centre': homectrl.state.study_centre.text,
-                              'exam_centre': homectrl.state.exam_centre.text,
+                              'course': homectrl.state.course.text.toUpperCase(),
+                              'study_centre': homectrl.state.study_centre.text.toUpperCase(),
+                              'exam_centre': homectrl.state.exam_centre.text.toUpperCase(),
                               'exam_date': homectrl.state.exam_date.text,
                               'exam_time': homectrl.state.exam_time.text,
                             }).then((value) => Navigator.of(context).pop());
@@ -165,9 +165,13 @@ Widget HTCard(
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    data['name'],
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+                  SizedBox(
+                    width: Get.width - 120,
+                    child: Text(
+                      data['name'],
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+                    ),
                   ),
                   Text(data['admission_no'], style: TextStyle(fontSize: 18)),
                 ],
@@ -275,8 +279,9 @@ Widget CustomTextForm({
                     onPressed: () async {
                       final date = await showDatePicker(
                         context: context!,
+                        initialDatePickerMode: DatePickerMode.year,
                         initialDate: DateTime.now(),
-                        firstDate: DateTime(2001),
+                        firstDate: DateTime(1923),
                         lastDate: DateTime(2050),
                       );
                       if (date != null) {

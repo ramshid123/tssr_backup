@@ -7,7 +7,8 @@ import 'package:tssr_ctrl/routes/names.dart';
 import 'package:tssr_ctrl/services/database_service.dart';
 import 'package:tssr_ctrl/widgets/tssr.dart';
 
-Widget TStoreCardAdmin(BuildContext context, Map<String, dynamic> doc) {
+Widget TStoreCardAdmin(
+    BuildContext context, Map<String, dynamic> doc, bool isMobile) {
   return Dismissible(
     key: Key(doc['doc_id']),
     background: Container(
@@ -102,8 +103,8 @@ Widget TStoreCardAdmin(BuildContext context, Map<String, dynamic> doc) {
                             await DatabaseService.StoreCollection.doc(
                                     doc['doc_id'])
                                 .update({
-                              'name': homectrl.state.name.text,
-                              'course': homectrl.state.course.text,
+                              'name': homectrl.state.name.text.toUpperCase(),
+                              'course': homectrl.state.course.text.toUpperCase(),
                               'desc': homectrl.state.desc.text,
                               'price': homectrl.state.price.text,
                             }).then((value) => Navigator.of(context).pop());
@@ -166,7 +167,7 @@ Widget TStoreCardAdmin(BuildContext context, Map<String, dynamic> doc) {
           children: [
             Container(
               height: 100,
-              width: Get.width / 3 - 40,
+              width: isMobile ? Get.width / 3 - 40 : Get.width / 6,
               decoration: BoxDecoration(
                   color: Colors.black,
                   borderRadius: BorderRadius.circular(20),

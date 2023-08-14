@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -27,8 +29,8 @@ class StudentUploadState {
     'Kasaragod',
   ];
 
-  var availableCourses = ['Select course', 'one', 'two', 'three'].obs;
-  var batches = ["March batch", "November batch"].obs;
+  var availableCourses = ['Select course'].obs;
+  var batches = ["June batch", "November batch"].obs;
 
   final formkey = GlobalKey<FormState>();
   final st_name = TextEditingController();
@@ -49,10 +51,13 @@ class StudentUploadState {
   final district = TextEditingController();
   final course = TextEditingController();
   final date_of_admission = TextEditingController();
-  final date_of_course_start = TextEditingController(text: "March batch");
+  final date_of_course_start = TextEditingController(text: "June batch");
 
   var sslc_path = PlatformFile(name: '', size: 0).obs;
   var photo_path = PlatformFile(name: '', size: 0).obs;
+
+  Rx<Uint8List> sslc_compressed = Uint8List(0).obs;
+  Rx<Uint8List> photo_compressed = Uint8List(0).obs;
   // final district = TextEditingController(); higher education qualification
   // final district = TextEditingController(); technical professionnal qualification
   // final duration = TextEditingController();

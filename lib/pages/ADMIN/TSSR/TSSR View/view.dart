@@ -15,7 +15,7 @@ class TssrPage extends GetView<TssrPageController> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      bool isMobile = Get.width <= 768 ? true : false;
+      // bool isMobile = Get.width <= 768 ? true : false;
       return Scaffold(
         backgroundColor: Colors.grey[100],
         // appBar: isMobile ? CustomAppBar('TSSR') : null,
@@ -36,9 +36,10 @@ class TssrPage extends GetView<TssrPageController> {
           ],
           body: Obx(() {
             return Padding(
-              padding: isMobile
-                  ? EdgeInsets.zero
-                  : EdgeInsets.symmetric(horizontal: Get.width / 20),
+              padding: EdgeInsets.zero,
+              // padding: isMobile
+              //     ? EdgeInsets.zero
+              //     : EdgeInsets.symmetric(horizontal: Get.width / 20),
               child: FirestoreListView(
                 query: controller.state.query.value,
                 emptyBuilder: (context) => Center(
