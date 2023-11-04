@@ -112,11 +112,21 @@ class FranchiseUploadPage extends GetView<FranchiseUploadController> {
                           hintText: 'Centre Name',
                           ctrl: controller.state.centre_name),
                       SizedBox(height: 20),
+                      CustomTextForm(
+                          hintText: 'Head Phone No',
+                          ctrl: controller.state.headPhoneNo),
+                      SizedBox(height: 20),
+                      CustomTextForm(
+                          hintText: 'Place', ctrl: controller.state.place),
+                      SizedBox(height: 20),
+                      CustomTextForm(
+                          hintText: 'City', ctrl: controller.state.city),
+                      SizedBox(height: 20),
                       DropDownListWidget(controller.state.districts,
                           controller.state.district, 'District'),
                       SizedBox(height: 20),
                       CustomTextForm(
-                          hintText: 'Place', ctrl: controller.state.place),
+                          hintText: 'Pincode', ctrl: controller.state.pincode),
                       SizedBox(height: 20),
                       CustomTextForm(
                           hintText: 'Renewal Date',
@@ -164,15 +174,23 @@ class FranchiseUploadPage extends GetView<FranchiseUploadController> {
                                             itemBuilder: (context, index) {
                                               final item = ctrl.state
                                                   .SelectedCourses.value[index];
-                                              return ListTile(
-                                                title: Text(item),
-                                                trailing: IconButton(
-                                                  onPressed: () async =>
-                                                      ctrl.removeCourseFromList(
-                                                          item),
-                                                  icon:
-                                                      Icon(Icons.remove_circle),
-                                                ),
+                                              return Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  ListTile(
+                                                    title: Text(item),
+                                                    trailing: IconButton(
+                                                      onPressed: () async => ctrl
+                                                          .removeCourseFromList(
+                                                              item),
+                                                      icon: Icon(
+                                                          Icons.remove_circle),
+                                                    ),
+                                                  ),
+                                                  Divider(
+                                                    color: Colors.grey,
+                                                  )
+                                                ],
                                               );
                                             },
                                             itemCount: ctrl.state
@@ -182,7 +200,7 @@ class FranchiseUploadPage extends GetView<FranchiseUploadController> {
                                 Container(
                                   height: 1,
                                   width: Get.width,
-                                  color: Colors.black,
+                                  color: ColorConstants.purple_clr,
                                 ),
                                 Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 20),
@@ -276,11 +294,19 @@ Widget KCourseListViewItem(
   String title,
   FranchiseUploadController controller,
 ) {
-  return ListTile(
-    title: Text(title),
-    trailing: IconButton(
-      onPressed: () async => controller.addCourseToList(title),
-      icon: Icon(Icons.add_circle),
-    ),
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      ListTile(
+        title: Text(title),
+        trailing: IconButton(
+          onPressed: () async => controller.addCourseToList(title),
+          icon: Icon(Icons.add_circle),
+        ),
+      ),
+      Divider(
+        color: Colors.grey,
+      ),
+    ],
   );
 }

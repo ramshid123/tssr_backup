@@ -63,7 +63,7 @@ Widget TOrderCard(Map<String, dynamic> info, TOrdersController controller) {
               Align(
                 alignment: Alignment.centerRight,
                 child: Text(
-                  info['total'].toString(),
+                  '₹${info['total']}',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -320,7 +320,7 @@ Widget bottomSheet(Map<String, dynamic> info) {
                         Spacer(),
                         // SizedBox(width: 10),
                         Text(
-                          '\$${info['total']}',
+                          '₹${info['total']}',
                           style: TextStyle(
                             fontSize: 30,
                             fontWeight: FontWeight.bold,

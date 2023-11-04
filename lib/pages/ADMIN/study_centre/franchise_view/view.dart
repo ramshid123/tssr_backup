@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:get/get.dart';
+import 'package:get/get_rx/src/rx_typedefs/rx_typedefs.dart';
 import 'package:tssr_ctrl/pages/ADMIN/study_centre/franchise_view/controller.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:tssr_ctrl/widgets/app_bar.dart';
@@ -21,7 +22,10 @@ class FranchisePage extends GetView<FranchisePageController> {
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverAppBar(
               flexibleSpace: OptionsBar(context, controller,
-                  ['Name', 'centre_name', 'Renewal', 'renewal']),
+                  ['Name', 'centre_name', 'Renewal', 'renewal'],
+                  extraMenuButton1: kAtcReportDownloadButton(
+                      onTap: () async =>
+                          await controller.downloadAtcReport(context))),
               toolbarHeight: 170,
               backgroundColor: Colors.white,
               automaticallyImplyLeading: false,
@@ -60,5 +64,24 @@ class FranchisePage extends GetView<FranchisePageController> {
         ),
       );
     });
+  }
+
+  // Widget kAtcReportDownloadButton() {
+  //   return Text(
+  //     'ATC Report',
+  //     style: TextStyle(color: Colors.black),
+  //   );
+  // }
+}
+
+class kAtcReportDownloadButton {
+  final Callback onTap;
+  kAtcReportDownloadButton({required this.onTap});
+
+  Widget widget() {
+    return Text(
+      'ATC Report',
+      style: TextStyle(color: Colors.black),
+    );
   }
 }

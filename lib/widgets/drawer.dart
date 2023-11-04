@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
 import 'package:tssr_ctrl/routes/names.dart';
+import 'package:tssr_ctrl/routes/shared_pref_strings.dart';
 import 'package:tssr_ctrl/services/authentication_service.dart';
 
 Widget CustomDrawer(
-    int index, String name, String email, String atc, bool isAdmin) {
+    int index, String name, String email, String atc, bool isAdmin,
+    {required SharedPreferences sf}) {
   return Drawer(
     child: Column(
       children: [
@@ -60,23 +63,55 @@ Widget CustomDrawer(
         Expanded(
           child: Container(
             decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/profile_bg.jpeg'),
-                fit: BoxFit.cover,
-                opacity: 0.2
-              )
-            ),
+                image: DecorationImage(
+                    image: AssetImage('assets/profile_bg.jpeg'),
+                    fit: BoxFit.cover,
+                    opacity: 0.2)),
             child: ListView(
               shrinkWrap: true,
               children: [
                 DrawerItem('Home', Icons.home, index == 0, index, isAdmin),
-                DrawerItem('My profile', Icons.person, index == 1, index, isAdmin),
+                DrawerItem(
+                    'My profile', Icons.person, index == 1, index, isAdmin),
                 DrawerItem('Logout', Icons.logout, false, index, isAdmin),
+                sf.getBool(SharedPrefStrings.FROM_ADMIN)!
+                    ? kAdminLoginButton(sf)
+                    : SizedBox(),
               ],
             ),
           ),
         )
       ],
+    ),
+  );
+}
+
+Widget kAdminLoginButton(SharedPreferences sf) {
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: 10),
+    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+    decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+    child: ListTile(
+      contentPadding: EdgeInsets.zero,
+      onTap: () async {
+        try {
+          await AuthService().logout();
+          await Future.delayed(1.seconds);
+          await AuthService().login('sf@tssr.com', '123123');
+          await sf.setBool(SharedPrefStrings.FROM_ADMIN, false);
+        } catch (e) {
+          print(e);
+        }
+      },
+      selected: false,
+      title: Text(
+        'Admin Login',
+        style: TextStyle(fontSize: 20),
+      ),
+      leading: Icon(
+        Icons.admin_panel_settings,
+        size: 30,
+      ),
     ),
   );
 }

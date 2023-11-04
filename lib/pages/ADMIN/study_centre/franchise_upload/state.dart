@@ -20,7 +20,7 @@ class FranchiseUploadState {
     'Kannur',
     'Kasaragod',
   ];
-  
+
   final formkey1 = GlobalKey<FormState>();
   final formkey2 = GlobalKey<FormState>();
 
@@ -36,6 +36,9 @@ class FranchiseUploadState {
   final centre_name = TextEditingController();
   final district = TextEditingController();
   final place = TextEditingController();
+  final city = TextEditingController();
+  final pincode = TextEditingController();
+  final headPhoneNo = TextEditingController();
   final renewal = TextEditingController();
 
   var isLoading = false.obs;

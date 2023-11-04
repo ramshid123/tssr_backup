@@ -4,10 +4,16 @@ import 'package:get/get.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
 import 'package:tssr_ctrl/pages/ADMIN/T%20Store(admin)/orders/torders_index.dart';
 import 'package:tssr_ctrl/pages/ADMIN/TSSR/TSSR%20View/tssrpage_index.dart';
+import 'package:tssr_ctrl/pages/ADMIN/study_centre/franchise_view/view.dart';
 import 'package:tssr_ctrl/services/authentication_service.dart';
 import 'package:tssr_ctrl/services/database_service.dart';
 
-Widget OptionsBar(BuildContext context, controller, List sortOpts) {
+Widget OptionsBar(
+  BuildContext context,
+  controller,
+  List sortOpts, {
+  kAtcReportDownloadButton? extraMenuButton1 = null,
+}) {
   final textCtrl = TextEditingController();
   final focusNode = FocusNode();
   return Padding(
@@ -96,6 +102,12 @@ Widget OptionsBar(BuildContext context, controller, List sortOpts) {
                           'Refresh',
                           style: TextStyle(color: Colors.blue),
                         )),
+                    if (extraMenuButton1 != null)
+                      PopupMenuItem(
+                        child: extraMenuButton1.widget(),
+                        onTap: extraMenuButton1.onTap,
+                        value: '3',
+                      ),
                   ],
                   elevation: 8.0,
                 );

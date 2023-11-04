@@ -66,6 +66,7 @@ class LoginPageController extends GetxController {
 
           await SF.setString(SharedPrefStrings.PASSWORD, password.trim());
           await SF.setString(SharedPrefStrings.EMAIL, email.trim());
+          await SF.setBool(SharedPrefStrings.FROM_ADMIN, false);
           await AuthService.auth.signInWithEmailAndPassword(
               email: email.trim(), password: password.trim());
         } else {

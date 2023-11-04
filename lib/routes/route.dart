@@ -17,15 +17,17 @@ import 'package:tssr_ctrl/pages/FRANCHISE/T%20store%20page/tstorepage_index.dart
 import 'package:tssr_ctrl/pages/ADMIN/TSSR/result View/resultview_index.dart';
 import 'package:tssr_ctrl/pages/FRANCHISE/home(FR)/homefr_index.dart';
 import 'package:tssr_ctrl/pages/FRANCHISE/my_courses/mycourses_index.dart';
-import 'package:tssr_ctrl/pages/FRANCHISE/notification_fr/view.dart';
+import 'package:tssr_ctrl/pages/FRANCHISE/notification_fr/backup.dart';
 import 'package:tssr_ctrl/pages/FRANCHISE/order%20success%20Page/ordersuccess_index.dart';
 import 'package:tssr_ctrl/pages/FRANCHISE/report(FR)/reportfranchise_index.dart';
 import 'package:tssr_ctrl/pages/FRANCHISE/student_upload/studentupload_index.dart';
+import 'package:tssr_ctrl/pages/pdf_view_page/pdfviewscreen_index.dart';
 import 'package:tssr_ctrl/pages/profile/profile_index.dart';
 import 'package:tssr_ctrl/pages/ADMIN/TSSR/result upload/resultupload_index.dart';
 import 'package:tssr_ctrl/pages/splash_screen/splash_screen.dart';
 import 'package:tssr_ctrl/app_update.dart';
 import 'package:tssr_ctrl/test_page/testpage_index.dart';
+import '../pages/FRANCHISE/notification_fr/notificationsclient_index.dart';
 import 'names.dart';
 import 'package:tssr_ctrl/pages/login/loginpage_index.dart';
 import 'package:tssr_ctrl/pages/ADMIN/TSSR/TSSR%20View/tssrpage_index.dart';
@@ -198,10 +200,16 @@ class AppRoutes {
     GetPage(
       name: AppRouteNames.NOTIFICATION_CLIENT,
       page: () => NotificationsClientPage(),
+      binding: NotificationsClientBinding(),
     ),
     GetPage(
       name: AppRouteNames.SPLASH_SCREEN,
       page: () => SplashScreen(),
+    ),
+    GetPage(
+      name: AppRouteNames.PDF_VIEW_SCREEN,
+      page: () => PdfViewScreenPage(),
+      binding: PdfViewScreenBinding(),
     ),
   ];
 }

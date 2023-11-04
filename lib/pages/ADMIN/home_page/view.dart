@@ -9,6 +9,7 @@ import 'package:tssr_ctrl/pages/ADMIN/TSSR/TSSR%20View/tssrpage_index.dart';
 import 'package:http/http.dart' as http;
 import 'package:tssr_ctrl/pages/ADMIN/home_page/controller.dart';
 import 'package:tssr_ctrl/pages/ADMIN/study_centre/franchise_upload/franchiseupload_index.dart';
+import 'package:tssr_ctrl/pages/ADMIN/study_centre/franchise_view/pdf_creation.dart';
 import 'package:tssr_ctrl/pages/splash_screen/splash_screen.dart';
 import 'package:tssr_ctrl/routes/names.dart';
 import 'package:tssr_ctrl/routes/shared_pref_strings.dart';
@@ -31,7 +32,8 @@ class HomePage extends GetView<HomePageController> {
               controller.state.centre_name.value,
               controller.state.email.value,
               controller.state.atc.value,
-              controller.state.isAdmin.value);
+              controller.state.isAdmin.value,
+              sf: controller.state.sharedPrefInstance!);
         }),
         body: LayoutBuilder(
           builder: (context, constraints) {

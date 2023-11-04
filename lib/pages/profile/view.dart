@@ -21,7 +21,8 @@ class ProfilePage extends GetView<ProfileController> {
             controller.state.centre_name.value,
             controller.state.email.value,
             controller.state.atc.value,
-            controller.state.isAdmin.value);
+            controller.state.isAdmin.value,
+            sf: controller.state.sharedPrefInstance!);
       }),
       body: Container(
         height: Get.height,

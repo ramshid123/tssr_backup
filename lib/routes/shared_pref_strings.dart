@@ -11,4 +11,5 @@ class SharedPrefStrings {
   static final String RENEWAL = 'renewal';
   static final String COURSES = 'courses';
   static final String VERSION = 'version';
+  static final String FROM_ADMIN = 'from_admin';
 }

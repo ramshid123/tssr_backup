@@ -4,4 +4,5 @@ class ReportFranchiseState {
   String? franchiseName;
 
   var isLoading = false.obs;
+
 }

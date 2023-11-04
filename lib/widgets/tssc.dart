@@ -110,7 +110,8 @@ Widget TsscCard(var data, TsscPageController controller, BuildContext context) {
                               'name': homectrl.state.name.text.toUpperCase(),
                               'reg_no': homectrl.state.reg_no.text,
                               'skill': homectrl.state.skill.text.toUpperCase(),
-                              'skill_centre': homectrl.state.skill_centre.text.toUpperCase(),
+                              'skill_centre': homectrl.state.skill_centre.text
+                                  .toUpperCase(),
                               'exam_date': homectrl.state.exam_date.text,
                             }).then((value) => Navigator.of(context).pop());
                           } catch (e) {
@@ -248,6 +249,9 @@ Widget CustomTextForm({
       SizedBox(height: 10),
       TextFormField(
         controller: ctrl,
+        keyboardType: hintText.toLowerCase().contains('pincode')
+            ? TextInputType.number
+            : TextInputType.text,
         decoration: InputDecoration(
             filled: true,
             fillColor: Colors.deepPurple[100],

@@ -43,6 +43,7 @@ Widget StudentCard(var data, controller, BuildContext context) {
                         : ElevatedButton(
                             onPressed: () async =>
                                 await controller.selectAndUploadPhoto(
+                              context: context,
                               reg_no: data['reg_no'],
                               doc_id: data['doc_id'],
                               type: 'Photo',
@@ -58,6 +59,7 @@ Widget StudentCard(var data, controller, BuildContext context) {
                         : ElevatedButton(
                             onPressed: () async =>
                                 await controller.selectAndUploadPhoto(
+                                  context: context,
                                   reg_no: data['reg_no'],
                                   doc_id: data['doc_id'],
                                   type: 'SSLC',

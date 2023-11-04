@@ -7,6 +7,7 @@ import 'package:tssr_ctrl/services/pdf_service.dart';
 import 'package:tssr_ctrl/widgets/app_bar.dart';
 import 'package:tssr_ctrl/routes/names.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
+// import 'package:pdfx/pdfx.dart' as pdfx;
 
 class ReportFranchisePage extends GetView<ReportFranchiseController> {
   const ReportFranchisePage({super.key});
@@ -43,13 +44,54 @@ class ReportFranchisePage extends GetView<ReportFranchiseController> {
                   spacing: 20,
                   children: [
                     ReportPageButton(
-                      'Student Details',
+                      'Student Details\n(All Courses)',
                       isMobile: isMobile,
                       context: context,
-                      controller,
+                      controller: controller,
+                      isPPTC: false,
                       pgmd: pageMode.potrait,
                       gdmd: GetDataMode.studentDetails,
                     ),
+                    ReportPageButton(
+                      'Attendence Register\n(All Courses)',
+                      isMobile: isMobile,
+                      context: context,
+                      controller: controller,
+                      isPPTC: false,
+                      pgmd: pageMode.potrait,
+                      gdmd: GetDataMode.attendanceRegister,
+                    ),
+                    ReportPageButton(
+                        'Class Test Marksheet\n(PPTTC/MTTC/PM/AM/AC) Course',
+                        controller: controller,
+                        isPPTC: true,
+                        context: context,
+                        pgmd: pageMode.landscape,
+                        gdmd: GetDataMode.pptcClassTest,
+                        isMobile: isMobile),
+                    ReportPageButton('Commision Marksheet\n(PPTTC/MTTC) Course',
+                        controller: controller,
+                        isPPTC: true,
+                        context: context,
+                        pgmd: pageMode.potrait,
+                        gdmd: GetDataMode.pptcCommision,
+                        isMobile: isMobile),
+                    ReportPageButton(
+                        'Craft & Practical Work\n(PPTTC/MTTC) Course',
+                        controller: controller,
+                        isPPTC: true,
+                        context: context,
+                        pgmd: pageMode.landscape,
+                        gdmd: GetDataMode.pptcPractical,
+                        isMobile: isMobile),
+                    ReportPageButton(
+                        'Teaching Practice Marksheet\n(PPTTC/MTTC) Course',
+                        controller: controller,
+                        isPPTC: true,
+                        context: context,
+                        pgmd: pageMode.potrait,
+                        gdmd: GetDataMode.pptcTeachingPractice,
+                        isMobile: isMobile),
                     SizedBox(width: Get.width, height: 10),
                   ],
                 ),
@@ -62,8 +104,10 @@ class ReportFranchisePage extends GetView<ReportFranchiseController> {
   }
 }
 
-Widget ReportPageButton(String title, ReportFranchiseController controller,
-    {required pageMode pgmd,
+Widget ReportPageButton(String title,
+    {required ReportFranchiseController controller,
+    required bool isPPTC,
+    required pageMode pgmd,
     required GetDataMode gdmd,
     required bool isMobile,
     required BuildContext context}) {
@@ -116,7 +160,7 @@ Widget ReportPageButton(String title, ReportFranchiseController controller,
                         pgMode: pgmd,
                         outputFormat: outputFormat,
                         dataMode: gdmd,
-                        isPPTC: false);
+                        isPPTC: isPPTC);
                   },
                 );
               },

@@ -14,10 +14,20 @@ class ExcelService {
       {required List<String> titles,
       required BuildContext context,
       required List<String> fields,
-      required List dataList,
+      required Map groupedMap,
       required String fileName}) async {
     try {
       final isConnected = await DatabaseService.checkInternetConnection();
+
+      // creating a list without study centre seperation
+      List dataList = [];
+      groupedMap.forEach((key, value) {
+        List s = groupedMap[key];
+        for (var item in s) {
+          dataList.add(item.data());
+        }
+      });
+
       if (isConnected) {
         final excel = Excel.createExcel();
 

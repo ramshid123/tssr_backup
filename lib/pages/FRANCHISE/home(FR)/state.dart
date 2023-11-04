@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeFrState {
   var atc = ''.obs;
@@ -7,5 +8,7 @@ class HomeFrState {
   var place = ''.obs;
   var email = ''.obs;
   var isAdmin = false.obs;
+
+  SharedPreferences? sharedPrefInstance;
 
 }

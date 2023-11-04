@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tssr_ctrl/pages/ADMIN/study_centre/franchise_view/pdf_creation.dart';
+import 'package:tssr_ctrl/routes/shared_pref_strings.dart';
+import 'package:tssr_ctrl/services/authentication_service.dart';
 import 'package:tssr_ctrl/services/database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'franchisepage_index.dart';
@@ -98,5 +102,32 @@ class FranchisePageController extends GetxController {
       backgroundColor: Colors.green,
       duration: 5.seconds,
     ));
+  }
+
+  Future downloadAtcReport(BuildContext context) async {
+    print('collecting data');
+    final franchiseListSnapshot =
+        await DatabaseService.FranchiseCollection.where('atc',
+                isNotEqualTo: 'ADMIN')
+            .get();
+    print('data collection complted');
+    final franchiseList =
+        franchiseListSnapshot.docs.map((e) => e.data()).toList();
+    if (context.mounted) {
+      await createFranchiseReport(context: context, DataList: franchiseList);
+    }
+  }
+
+  Future loginAsFranchise(
+      {required String email, required String password}) async {
+    try {
+      AuthService().logout();
+      await Future.delayed(1.seconds);
+      await AuthService().login(email, password);
+      final sf = await SharedPreferences.getInstance();
+      await sf.setBool(SharedPrefStrings.FROM_ADMIN, true);
+    } catch (e) {
+      print(e);
+    }
   }
 }

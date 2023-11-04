@@ -37,6 +37,7 @@ class AppRouteNames {
   static final LOGIN = '/login';
   static final PROFILE = '/profile';
   static final SPLASH_SCREEN = '/init';
+  static final PDF_VIEW_SCREEN = '/pdf_view';
 
   static final TEST_PAGE = '/test_page';
 }

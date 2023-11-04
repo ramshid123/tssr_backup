@@ -12,9 +12,8 @@ class ProfileController extends GetxController {
     // TODO: implement onReady
     super.onReady();
 
-    final SF = await SharedPreferences.getInstance();
-
     final sf = await SharedPreferences.getInstance();
+    state.sharedPrefInstance = sf;
     state.atc.value = await sf.getString(SharedPrefStrings.ATC)!;
     state.centre_head.value =
         await sf.getString(SharedPrefStrings.CENTRE_HEAD)!;

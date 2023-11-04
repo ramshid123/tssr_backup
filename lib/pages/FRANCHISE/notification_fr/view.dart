@@ -3,11 +3,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tssr_ctrl/pages/ADMIN/notification_admin/notificationsadmin_index.dart';
+import 'package:tssr_ctrl/pages/FRANCHISE/notification_fr/controller.dart';
 import 'package:tssr_ctrl/services/database_service.dart';
 import 'package:tssr_ctrl/widgets/app_bar.dart';
 import 'package:intl/intl.dart';
 
-class NotificationsClientPage extends StatelessWidget {
+class NotificationsClientPage extends GetView<NotificationsClientController> {
   const NotificationsClientPage({super.key});
 
   String calculateTime(int value) {
@@ -42,14 +43,25 @@ class NotificationsClientPage extends StatelessWidget {
               ),
             ),
             itemBuilder: (context, doc) {
-              final time = calculateTime(
-                  int.parse(doc.data()['time_lapse'].toString()));
+              final time =
+                  calculateTime(int.parse(doc.data()['time_lapse'].toString()));
               return GestureDetector(
                 onTap: () async {
                   await Get.defaultDialog(
-                    title: doc.data()['title'],
-                    middleText: doc.data()['message'],
-                  );
+                      title: doc.data()['title'],
+                      middleText: doc.data()['message'],
+                      actions: [
+                        doc.data()['document_url'] != 'none' &&
+                                doc.data()['document_url'] != null
+                            ? ElevatedButton.icon(
+                                onPressed: () async =>
+                                    await controller.downloadDocument(
+                                        doc.data()['document_url']),
+                                label: Text('Download document'),
+                                icon: Icon(Icons.download, color: Colors.white),
+                              )
+                            : const SizedBox(),
+                      ]);
                 },
                 child: Container(
                   margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),

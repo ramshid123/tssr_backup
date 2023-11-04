@@ -18,6 +18,7 @@ class HomeFrController extends GetxController {
     //   await initPlatformState();
     // }
     final sf = await SharedPreferences.getInstance();
+    state.sharedPrefInstance = sf;
     state.atc.value = await sf.getString(SharedPrefStrings.ATC)!;
     state.centre_head.value =
         await sf.getString(SharedPrefStrings.CENTRE_HEAD)!;

@@ -46,16 +46,19 @@ dependencies:
     sdk: flutter
   flutter_autoupdate: ^1.0.0
   flutter_image_compress: ^2.0.3
+  fluttertoast: ^8.2.2
   get: ^4.6.5
   http: ^0.13.3
   jsaver: ^1.2.0
   path_provider: ^2.0.15
   pdf: ^3.10.3
+  pdf_render: ^1.4.0
   permission_handler: ^10.2.0
   photo_view: ^0.14.0
   printing: ^5.10.4
   rive: ^0.11.1
   shared_preferences: ^2.1.1
+  url_launcher: ^6.1.13
 
 dev_dependencies:
   flutter_launcher_icons: "^0.13.1"
@@ -81,6 +84,7 @@ flutter_launcher_icons:
     generate: true
     image_path: "assets/ic_launcher.png"
 
+# dependency_override:
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter packages.

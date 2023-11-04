@@ -1,11 +1,14 @@
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:tssr_ctrl/pages/ADMIN/TSSC/TSSC%20View/controller.dart';
 import 'package:tssr_ctrl/pages/ADMIN/TSSR/TSSR%20View/tssrpage_index.dart';
 import 'package:tssr_ctrl/pages/ADMIN/study_centre/franchise_view/franchisepage_index.dart';
+import 'package:tssr_ctrl/pages/ADMIN/study_centre/franchise_view/pdf_creation.dart';
 import 'package:tssr_ctrl/services/database_service.dart';
 import 'package:tssr_ctrl/widgets/tssr.dart';
 
@@ -67,6 +70,7 @@ Widget FranchiseCard(
                         'courses': data['courses'],
                         'centre_name': data['centre_name'],
                         'centre_head': data['centre_head'],
+                        'head_phone_no': data['head_phone_no'] ?? '',
                         'atc': data['atc'],
                         'district': data['district'],
                         'place': data['place'],
@@ -101,16 +105,23 @@ Widget FranchiseCard(
                 key: homectrl.state.editFormKey,
                 child: Column(
                   children: [
-                    EditBoxFormField('Centre Name', homectrl.state.centre_name,
-                        data['centre_name']),
+                    // EditBoxFormField('Centre Name', homectrl.state.centre_name,
+                    //     data['centre_name']),
                     EditBoxFormField('Centre Head', homectrl.state.centre_head,
                         data['centre_head']),
+                    EditBoxFormField('Head Phone No', homectrl.state.headPhoneNo,
+                        data['head_phone_no']??''),
+
                     // EditBoxFormField(
                     //     'ATC Code', homectrl.state.atc, data['atc']),
                     EditBoxFormField(
-                        'District', homectrl.state.district, data['district']),
-                    EditBoxFormField(
                         'Place', homectrl.state.place, data['place']),
+                    EditBoxFormField(
+                        'City', homectrl.state.city, data['city'] ?? ''),
+                    EditBoxFormField(
+                        'District', homectrl.state.district, data['district']),
+                    EditBoxFormField('Pincode', homectrl.state.pincode,
+                        data['pincode'] ?? ''),
                     EditBoxFormField('Renewal Date', homectrl.state.renewal,
                         data['renewal']),
                     SizedBox(height: 20),
@@ -235,11 +246,19 @@ Widget FranchiseCard(
                             await DatabaseService.FranchiseCollection.doc(
                                     data['doc_id'])
                                 .update({
-                              'centre_name': homectrl.state.centre_name.text.toUpperCase(),
-                              'centre_head': homectrl.state.centre_head.text.toUpperCase(),
+                              // 'centre_name':
+                              //     homectrl.state.centre_name.text.toUpperCase(),
+                              'centre_head':
+                                  homectrl.state.centre_head.text.toUpperCase(),
+                              'head_phone_no':
+                                  homectrl.state.headPhoneNo.text.toUpperCase(),
                               // 'atc': homectrl.state.atc.text,
-                              'district': homectrl.state.district.text.toUpperCase(),
+                              'district':
+                                  homectrl.state.district.text.toUpperCase(),
                               'place': homectrl.state.place.text.toUpperCase(),
+                              'city': homectrl.state.city.text.toUpperCase(),
+                              'pincode':
+                                  homectrl.state.pincode.text.toUpperCase(),
                               'renewal': homectrl.state.renewal.text,
                             }).then((value) => Navigator.of(context).pop());
                           } catch (e) {
@@ -322,15 +341,47 @@ Widget FranchiseCard(
                                 ),
                                 SizedBox(height: 20),
                                 BottomSheetItem(
-                                    'Center Name', data['centre_name']),
+                                    'Center Name', data['centre_name'],
+                                    widget: kCopyButton(data['centre_name'])),
                                 BottomSheetItem(
-                                    'Centre Head', data['centre_head']),
-                                BottomSheetItem('ATC', data['atc']),
-                                BottomSheetItem('Email', data['email']),
-                                BottomSheetItem('Password', data['password']),
-                                BottomSheetItem('District', data['district']),
-                                BottomSheetItem('Place', data['place']),
-                                BottomSheetItem('Renewal', data['renewal']),
+                                    'Centre Head', data['centre_head'],
+                                    widget: kCopyButton(data['centre_head'])),
+                                BottomSheetItem(
+                                    'Head Phone No', data['head_phone_no']??'',
+                                    widget: kCopyButton(data['head_phone_no']??'')),
+                                BottomSheetItem('ATC', data['atc'],
+                                    widget: kCopyButton(data['atc'])),
+                                BottomSheetItem('Email', data['email'],
+                                    widget: kCopyButton(data['email'])),
+                                BottomSheetItem('Password', data['password'],
+                                    widget: kCopyButton(data['password'])),
+                                // BottomSheetItem('District', data['district'],
+                                //     widget: kCopyButton(data['district'])),
+                                // BottomSheetItem('Place', data['place'],
+                                //     widget: kCopyButton(data['place'])),
+                                BottomSheetItemForAddress(
+                                    place: data['place'],
+                                    city: data['city'] ?? '',
+                                    district: data['district'],
+                                    pincode: data['pincode'] ?? ''),
+                                BottomSheetItem('Renewal', data['renewal'],
+                                    widget: kCopyButton(data['renewal'])),
+                                ElevatedButton(
+                                    onPressed: () async =>
+                                        await controller.loginAsFranchise(
+                                            email: data['email'],
+                                            password: data['password']),
+                                    child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 10),
+                                        child: Text(
+                                          'Login',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ))),
+                                SizedBox(height: 20),
                               ],
                             ),
                           ),
@@ -429,19 +480,108 @@ Widget CustomTextForm({
   );
 }
 
-Widget BottomSheetItem(String title, String info) {
+Widget kCopyButton(String text) {
+  return GestureDetector(
+    onTap: () async {
+      await Clipboard.setData(ClipboardData(text: text));
+      Fluttertoast.showToast(
+          msg: "Copied",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          webBgColor: "linear-gradient(to right, #673AB7, #673AB7)",
+          webPosition: "center",
+          webShowClose: true,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    },
+    child: Container(
+      color: Colors.transparent,
+      child: Row(
+        children: [
+          Icon(
+            Icons.copy,
+            color: Colors.grey,
+          ),
+          SizedBox(width: 5),
+          Text(
+            'copy',
+            style: TextStyle(color: Colors.grey),
+          )
+        ],
+      ),
+    ),
+  );
+}
+
+Widget BottomSheetItem(String title, String info,
+    {Widget widget = const Text('')}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       SizedBox(height: 10),
-      Text(
-        title,
-        style: TextStyle(
-            fontSize: 18, fontWeight: FontWeight.w500, color: Colors.grey),
+      Row(
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+                fontSize: 18, fontWeight: FontWeight.w500, color: Colors.grey),
+          ),
+          Spacer(),
+          widget,
+        ],
       ),
       SizedBox(height: 5),
       Text(
         info,
+        style: TextStyle(fontSize: 19, fontWeight: FontWeight.w400),
+      ),
+      Divider(),
+      SizedBox(height: 10),
+    ],
+  );
+}
+
+Widget BottomSheetItemForAddress(
+    {Widget widget = const Text(''),
+    required String place,
+    required String city,
+    required String district,
+    required String pincode}) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      SizedBox(height: 10),
+      Row(
+        children: [
+          Text(
+            'Address',
+            style: TextStyle(
+                fontSize: 18, fontWeight: FontWeight.w500, color: Colors.grey),
+          ),
+          Spacer(),
+          widget,
+        ],
+      ),
+      SizedBox(height: 5),
+      Text(
+        place,
+        style: TextStyle(fontSize: 19, fontWeight: FontWeight.w400),
+      ),
+      SizedBox(height: 5),
+      Text(
+        city,
+        style: TextStyle(fontSize: 19, fontWeight: FontWeight.w400),
+      ),
+      SizedBox(height: 5),
+      Text(
+        district,
+        style: TextStyle(fontSize: 19, fontWeight: FontWeight.w400),
+      ),
+      SizedBox(height: 5),
+      Text(
+        pincode,
         style: TextStyle(fontSize: 19, fontWeight: FontWeight.w400),
       ),
       Divider(),

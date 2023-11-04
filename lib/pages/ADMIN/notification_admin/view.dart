@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,8 @@ class NotificationsAdminPage extends GetView<NotificationsAdminController> {
         floatingActionButton: FloatingActionButton.extended(
           label: Text('Create'),
           icon: Icon(Icons.add),
-          onPressed: () async => controller.createNotification(),
+          onPressed: () async => controller.createNotification(
+              context: context, controller: controller),
         ),
         body: Obx(() {
           return FirestoreListView(
@@ -41,9 +43,20 @@ class NotificationsAdminPage extends GetView<NotificationsAdminController> {
               return GestureDetector(
                 onTap: () async {
                   await Get.defaultDialog(
-                    title: doc.data()['title'],
-                    middleText: doc.data()['message'],
-                  );
+                      title: doc.data()['title'],
+                      middleText: doc.data()['message'],
+                      actions: [
+                        doc.data()['document_url'] != 'none' &&
+                                doc.data()['document_url'] != null
+                            ? ElevatedButton.icon(
+                                onPressed: () async =>
+                                    await controller.downloadDocument(
+                                        doc.data()['document_url']),
+                                label: Text('Download document'),
+                                icon: Icon(Icons.download, color: Colors.white),
+                              )
+                            : const SizedBox(),
+                      ]);
                 },
                 child: Dismissible(
                   key: Key(doc.id),
@@ -60,12 +73,11 @@ class NotificationsAdminPage extends GetView<NotificationsAdminController> {
                       ],
                     ),
                   ),
-                  onDismissed: (val) async => controller.deleteNotification(
-                      doc: doc, context: context),
+                  onDismissed: (val) async =>
+                      controller.deleteNotification(doc: doc, context: context),
                   direction: DismissDirection.startToEnd,
                   child: Container(
-                    margin:
-                        EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                     padding: EdgeInsets.all(5),
                     color: Colors.white,
                     width: Get.width,
@@ -141,4 +153,32 @@ Widget kNotificationTextField(
       },
     ),
   );
+}
+
+Widget kPhotoSelectionButton(
+    {required Rx<PlatformFile> file,
+    required String buttonText,
+    required BuildContext context,
+    required NotificationsAdminController controller,
+    required Rx<Uint8List> compressedFile}) {
+  return Obx(() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ElevatedButton.icon(
+          onPressed: () async {
+            await controller.selectPhoto(
+                file: file, fileBytes: compressedFile, context: context);
+          },
+          label: Text(buttonText),
+          icon: Icon(
+            Icons.upload,
+            color: Colors.white,
+          ),
+        ),
+        SizedBox(width: 10),
+        Text(file.value.name.toString()),
+      ],
+    );
+  });
 }

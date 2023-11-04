@@ -14,9 +14,12 @@ class FranchisePageState {
 
   var centre_name = TextEditingController();
   var centre_head = TextEditingController();
+  var headPhoneNo = TextEditingController();
   var atc = TextEditingController();
   var district = TextEditingController();
   var place = TextEditingController();
+  var city = TextEditingController();
+  var pincode = TextEditingController();
   var renewal = TextEditingController();
   var courses = [].obs;
 

@@ -24,7 +24,8 @@ class HomeFrPage extends GetView<HomeFrController> {
             controller.state.centre_name.value,
             controller.state.email.value,
             controller.state.atc.value,
-            controller.state.isAdmin.value);
+            controller.state.isAdmin.value,
+            sf: controller.state.sharedPrefInstance!);
       }),
       body: LayoutBuilder(builder: (context, c) {
         bool isMobile = Get.width <= 768 ? true : false;
