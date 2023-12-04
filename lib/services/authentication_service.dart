@@ -18,7 +18,8 @@ class AuthService {
         final sf = await SharedPreferences.getInstance();
         final isAdmin = sf.getBool(SharedPrefStrings.ISADMIN);
         if (isAdmin!)
-          Get.offAllNamed(AppRouteNames.HOME); //admin
+          // Get.offAllNamed(AppRouteNames.HOME); //admin
+          Get.offAllNamed(AppRouteNames.HOME);
         else
           Get.offAllNamed(AppRouteNames.HOME_FR); //franchise
       }

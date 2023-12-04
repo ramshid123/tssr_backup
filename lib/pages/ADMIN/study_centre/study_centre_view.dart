@@ -46,6 +46,8 @@ class StudyCentreHomePage extends StatelessWidget {
                         AppRouteNames.FRANCHISE_DATA, isMobile),
                     TstoreButton('Courses', Icons.menu_book_outlined,
                         AppRouteNames.COURSES_ADMIN, isMobile),
+                    TstoreButton('ATC Requests', Icons.handshake,
+                        AppRouteNames.ATC_REQUESTS, isMobile),
                   ],
                 ),
               ],

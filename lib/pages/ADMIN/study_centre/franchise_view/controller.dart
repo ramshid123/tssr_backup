@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tssr_ctrl/pages/ADMIN/study_centre/franchise_view/pdf_creation.dart';
+import 'package:tssr_ctrl/routes/names.dart';
 import 'package:tssr_ctrl/routes/shared_pref_strings.dart';
 import 'package:tssr_ctrl/services/authentication_service.dart';
 import 'package:tssr_ctrl/services/database_service.dart';
@@ -128,6 +130,94 @@ class FranchisePageController extends GetxController {
       await sf.setBool(SharedPrefStrings.FROM_ADMIN, true);
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future changePassword(
+      {required String email,
+      required String password,
+      required String docId}) async {
+    final passwordCont = TextEditingController();
+    await Get.defaultDialog(
+        title: 'Change password',
+        content: Column(
+          children: [
+            TextFormField(
+              controller: passwordCont,
+              decoration: InputDecoration(
+                hintText: 'New Password',
+              ),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async {
+                if (passwordCont.text.isNotEmpty &&
+                    passwordCont.text.length > 6) {
+                  final sf = await SharedPreferences.getInstance();
+                  final adminPassword =
+                      sf.getString(SharedPrefStrings.PASSWORD);
+                  final adminEmail = sf.getString(SharedPrefStrings.EMAIL);
+                  try {
+                    // final sf = await SharedPreferences.getInstance();
+                    // final adminPassword =
+                    //     sf.getString(SharedPrefStrings.PASSWORD);
+                    // final adminEmail = sf.getString(SharedPrefStrings.EMAIL);
+
+                    await DatabaseService.FranchiseCollection.doc(docId)
+                        .update({
+                      'password': passwordCont.text,
+                    });
+
+                    await AuthService().logout();
+                    await Future.delayed(100.milliseconds);
+                    await AuthService().login(email, password);
+                    await Future.delayed(100.milliseconds);
+                    await AuthService.auth.currentUser!
+                        .updatePassword(passwordCont.text);
+                    await Future.delayed(100.milliseconds);
+                    await AuthService().logout();
+                    await Future.delayed(100.milliseconds);
+                    await AuthService().login(
+                        adminEmail ?? 'sf@tssr.com', adminPassword ?? '123123');
+                    await Future.delayed(100.milliseconds);
+                    await Get.toNamed(AppRouteNames.FRANCHISE_DATA);
+                  } catch (e) {
+                    await DatabaseService.FranchiseCollection.doc(docId)
+                        .update({'password': password});
+                    await Future.delayed(100.milliseconds);
+                    await AuthService().logout();
+                    await Future.delayed(100.milliseconds);
+                    await AuthService().login(
+                        adminEmail ?? 'sf@tssr.com', adminPassword ?? '123123');
+                    await Future.delayed(100.milliseconds);
+                    await Get.toNamed(AppRouteNames.FRANCHISE_DATA);
+                  }
+                }
+              },
+              child: Text('Change'),
+            ),
+          ],
+        ));
+  }
+
+  Future<bool?> changeClientAccessToReports({required String docId}) async {
+    try {
+      final docSnapshot = await DatabaseService.FranchiseCollection.where(
+              'doc_id',
+              isEqualTo: docId)
+          .get();
+      final newValue =
+          docSnapshot.docs.first.data()['can_access_report'] == null ||
+                  docSnapshot.docs.first.data()['can_access_report']
+              ? false
+              : true;
+      await DatabaseService.FranchiseCollection.doc(docId).update({
+        'can_access_report': newValue,
+      });
+      return newValue;
+    } catch (e) {
+      print(e);
+      return null;
     }
   }
 }

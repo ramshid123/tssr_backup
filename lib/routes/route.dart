@@ -4,8 +4,10 @@ import 'package:tssr_ctrl/pages/ADMIN/T%20Store(admin)/books/tbooks_index.dart';
 import 'package:tssr_ctrl/pages/ADMIN/T%20Store(admin)/view.dart';
 import 'package:tssr_ctrl/pages/ADMIN/TSSC/TSSC%20View/tsscpage_index.dart';
 import 'package:tssr_ctrl/pages/ADMIN/TSSC/tssc_view.dart';
+import 'package:tssr_ctrl/pages/ADMIN/admin_settings_page/adminsettings_index.dart';
 import 'package:tssr_ctrl/pages/ADMIN/notification_admin/notificationsadmin_index.dart';
 import 'package:tssr_ctrl/pages/ADMIN/report_/report_view.dart';
+import 'package:tssr_ctrl/pages/ADMIN/study_centre/atc_requests/atcrequestspage_index.dart';
 import 'package:tssr_ctrl/pages/ADMIN/study_centre/franchise_upload/franchiseupload_index.dart';
 import 'package:tssr_ctrl/pages/ADMIN/TSSR/hall%20tkt%20View/hallticketpage_index.dart';
 import 'package:tssr_ctrl/pages/ADMIN/TSSR/hall%20tkt%20upload/hallticketupload_index.dart';
@@ -210,6 +212,16 @@ class AppRoutes {
       name: AppRouteNames.PDF_VIEW_SCREEN,
       page: () => PdfViewScreenPage(),
       binding: PdfViewScreenBinding(),
+    ),
+    GetPage(
+      name: AppRouteNames.ADMIN_SETTINGS,
+      page: () => AdminSettingsPage(),
+      binding: AdminSettingsBinding(),
+    ),
+    GetPage(
+      name: AppRouteNames.ATC_REQUESTS,
+      page: () => AtcRequestsPageView(),
+      binding: AtcRequestsPageBinding(),
     ),
   ];
 }

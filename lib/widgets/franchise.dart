@@ -15,6 +15,7 @@ import 'package:tssr_ctrl/widgets/tssr.dart';
 Widget FranchiseCard(
     var data, FranchisePageController controller, BuildContext context) {
   final key = GlobalKey();
+  var canAccessReports = data['can_access_report'];
   return Dismissible(
     key: key,
     background: Container(
@@ -109,8 +110,10 @@ Widget FranchiseCard(
                     //     data['centre_name']),
                     EditBoxFormField('Centre Head', homectrl.state.centre_head,
                         data['centre_head']),
-                    EditBoxFormField('Head Phone No', homectrl.state.headPhoneNo,
-                        data['head_phone_no']??''),
+                    EditBoxFormField(
+                        'Head Phone No',
+                        homectrl.state.headPhoneNo,
+                        data['head_phone_no'] ?? ''),
 
                     // EditBoxFormField(
                     //     'ATC Code', homectrl.state.atc, data['atc']),
@@ -346,9 +349,10 @@ Widget FranchiseCard(
                                 BottomSheetItem(
                                     'Centre Head', data['centre_head'],
                                     widget: kCopyButton(data['centre_head'])),
-                                BottomSheetItem(
-                                    'Head Phone No', data['head_phone_no']??'',
-                                    widget: kCopyButton(data['head_phone_no']??'')),
+                                BottomSheetItem('Head Phone No',
+                                    data['head_phone_no'] ?? '',
+                                    widget: kCopyButton(
+                                        data['head_phone_no'] ?? '')),
                                 BottomSheetItem('ATC', data['atc'],
                                     widget: kCopyButton(data['atc'])),
                                 BottomSheetItem('Email', data['email'],
@@ -381,6 +385,53 @@ Widget FranchiseCard(
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ))),
+                                SizedBox(height: 20),
+                                ElevatedButton(
+                                  onPressed: () async =>
+                                      await controller.changePassword(
+                                          email: data['email'],
+                                          password: data['password'],
+                                          docId: data['doc_id']),
+                                  child: Text(
+                                    'Change Password',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        ColorConstants.blachish_clr,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 20),
+                                  ),
+                                ),
+                                SizedBox(height: 20),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                        'Give access to thier reports section?'),
+                                    SizedBox(width: 10),
+                                    GetBuilder(
+                                        init: controller,
+                                        builder: (controller) {
+                                          return Switch(
+                                            value: canAccessReports ==
+                                                    null ||
+                                                canAccessReports,
+                                            onChanged: (v) async {
+                                              canAccessReports =
+                                                  await controller
+                                                      .changeClientAccessToReports(
+                                                docId: data['doc_id'],
+                                              );
+                                              controller.update();
+                                            },
+                                          );
+                                        }),
+                                  ],
+                                ),
                                 SizedBox(height: 20),
                               ],
                             ),

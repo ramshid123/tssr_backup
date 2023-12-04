@@ -227,14 +227,37 @@ class StudentUploadController extends GetxController {
               await DatabaseService.MetaInformations.get();
           final aadhaarList =
               aadhaarListSnapshot.docs.first.data()['aadhaar_list'];
+
+          bool isAadhaarAlreadyRegistered = false;
           if (aadhaarList.contains(state.st_aadhar.text)) {
-            showSnackBar(
-                context: context,
-                isError: true,
-                title: 'Aadhaar number is taken.',
-                subtitle:
-                    "The given aadhaar number is already entered. Please check again.");
-            return;
+            isAadhaarAlreadyRegistered = true;
+            final studentSnapshot =
+                await DatabaseService.StudentDetailsCollection.where(
+                        'st_aadhaar',
+                        isEqualTo: state.st_aadhar.text)
+                    .get();
+
+            if (studentSnapshot.docs.isNotEmpty) {
+              for (var student in studentSnapshot.docs) {
+                if (student.data()['course'] == state.course.text) {
+                  showSnackBar(
+                      context: context,
+                      isError: true,
+                      title: 'Course already added.',
+                      subtitle:
+                          "The given aadhaar number has already enrolled in this course.");
+                  return;
+                }
+              }
+            }
+
+            // showSnackBar(
+            //     context: context,
+            //     isError: true,
+            //     title: 'Aadhaar number is taken.',
+            //     subtitle:
+            //         "The given aadhaar number is already entered. Please check again.");
+            // return;
           }
 
           final franchiseDataSnapshot =
@@ -303,11 +326,13 @@ class StudentUploadController extends GetxController {
                 .update({
               'current_reg_no': currentRegNo + 1,
             });
-            await DatabaseService.MetaInformations.doc(
-                    aadhaarListSnapshot.docs.first.id)
-                .update({
-              'aadhaar_list': FieldValue.arrayUnion([state.st_aadhar.text]),
-            });
+            if (!isAadhaarAlreadyRegistered) {
+              await DatabaseService.MetaInformations.doc(
+                      aadhaarListSnapshot.docs.first.id)
+                  .update({
+                'aadhaar_list': FieldValue.arrayUnion([state.st_aadhar.text]),
+              });
+            }
           }).then((value) {
             clearAllFields();
             Get.showSnackbar(GetSnackBar(

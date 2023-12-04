@@ -184,7 +184,9 @@ Widget ReportPageButton(String title,
                                 width: Get.width,
                                 color: Colors.white,
                                 child: FirestoreListView(
-                                  query: DatabaseService.CourseCollection,
+                                  query:
+                                      DatabaseService.CourseCollection.orderBy(
+                                          'course'),
                                   itemBuilder: (context, doc) {
                                     final item = doc.data();
                                     return ListTile(
@@ -219,15 +221,16 @@ Widget ReportPageButton(String title,
                             onPressed: () async {
                               final query =
                                   DatabaseService.FranchiseCollection.where(
-                                      'isAdmin',
-                                      isEqualTo: 'false');
+                                          'isAdmin',
+                                          isEqualTo: 'false')
+                                      .orderBy('centre_name');
                               Get.back();
                               await Get.bottomSheet(
                                 backgroundColor: Colors.white,
                                 Container(
                                   height: Get.height / 2,
                                   child: FirestoreListView(
-                                    pageSize: 5,
+                                    pageSize: 20,
                                     query: query,
                                     emptyBuilder: (context) => Center(
                                       child: Text(

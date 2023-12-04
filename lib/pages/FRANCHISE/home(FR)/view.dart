@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:tssr_ctrl/constants/colors.dart';
 import 'package:tssr_ctrl/pages/FRANCHISE/home(FR)/controller.dart';
 import 'package:tssr_ctrl/routes/names.dart';
+import 'package:tssr_ctrl/services/database_service.dart';
 import 'package:tssr_ctrl/services/excel_service.dart';
 import 'package:tssr_ctrl/widgets/drawer.dart';
 
@@ -17,6 +18,14 @@ class HomeFrPage extends GetView<HomeFrController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(onPressed: () async {
+        final response = await DatabaseService.MetaInformations.get();
+        int i = 0;
+        for (var item in response.docs.first.data()['aadhaar_list']) {
+          if (item == 'testtest111111testtesttest') i++;
+        }
+        print(i);
+      }),
       key: _scaffoldKey,
       drawer: Obx(() {
         return CustomDrawer(

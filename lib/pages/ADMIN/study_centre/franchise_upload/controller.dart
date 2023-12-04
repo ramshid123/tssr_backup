@@ -19,6 +19,20 @@ class FranchiseUploadController extends GetxController {
     super.onReady();
     state.courseLength.value = state.courseList.length;
     state.district.text = 'Select district';
+    checkIfFromTheRequestPage();
+  }
+
+  void checkIfFromTheRequestPage() {
+    if (Get.arguments != null) {
+      QueryDocumentSnapshot<Map<String, dynamic>> doc = Get.arguments;
+      state.centre_name.text = doc.data()['centre_name'];
+      state.centre_head.text = doc.data()['centre_head'];
+      state.city.text = doc.data()['city'];
+      state.district.text = doc.data()['district'];
+      state.headPhoneNo.text = doc.data()['phone_no'];
+      state.pincode.text = doc.data()['pincode'];
+      state.place.text = doc.data()['place'];
+    }
   }
 
   void increamentTextForms() {
@@ -140,7 +154,7 @@ class FranchiseUploadController extends GetxController {
           // 'atc': state.atc.value.text,
           'atc': atcCode,
           'centre_head': state.centre_head.value.text.toUpperCase(),
-          'head_phone_no': state.headPhoneNo.value,
+          'head_phone_no': state.headPhoneNo.value.text,
           'centre_name': state.centre_name.value.text.toUpperCase(),
           'district': state.district.value.text.toUpperCase(),
           'place': state.place.value.text.toUpperCase(),
@@ -154,7 +168,13 @@ class FranchiseUploadController extends GetxController {
                   currentScRegNoSnapshot.docs.first.id)
               .update({
             'sc_reg_no': int.parse(currentScRegNo.toString()) + 1,
-          }).then((value) {
+          }).then((value) async {
+            if (Get.arguments != null) {
+              await DatabaseService.atcRequestsCollection
+                  .doc(Get.arguments.data()['id'])
+                  .delete();
+            }
+
             state.email.clear();
             state.password.clear();
             state.atc.clear();
@@ -179,9 +199,10 @@ class FranchiseUploadController extends GetxController {
       }
     } on FirebaseAuthException catch (e) {
       if (e
-          .toString()
-          .substring(e.toString().indexOf('/'), e.toString().indexOf(']'))
-          .contains('email-already-in-use')) {
+              .toString()
+              .substring(e.toString().indexOf('/'), e.toString().indexOf(']'))
+              .contains('email-already-in-use') ||
+          e.message!.contains('email address is already in use')) {
         state.currentStep.value = 0;
         Get.snackbar(
           '',
@@ -206,6 +227,7 @@ class FranchiseUploadController extends GetxController {
           backgroundColor: Colors.red,
         );
       }
+
       print(e);
     } catch (e) {
       print(e);

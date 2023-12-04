@@ -21,6 +21,8 @@ class AppRouteNames {
   static final RESULT_UPLOAD = '/result_upload';
   static final RESULT_VIEW = '/result_view';
   static final NOTIFICATION_ADMIN = '/notifications_admin';
+  static final ADMIN_SETTINGS = '/admin_settings';
+  static final ATC_REQUESTS = '/atc_requests';
 
   //franchise
   static final HOME_FR = '/home_fr';

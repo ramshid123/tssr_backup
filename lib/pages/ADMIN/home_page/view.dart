@@ -13,6 +13,7 @@ import 'package:tssr_ctrl/pages/ADMIN/study_centre/franchise_view/pdf_creation.d
 import 'package:tssr_ctrl/pages/splash_screen/splash_screen.dart';
 import 'package:tssr_ctrl/routes/names.dart';
 import 'package:tssr_ctrl/routes/shared_pref_strings.dart';
+import 'package:tssr_ctrl/services/database_service.dart';
 import 'package:tssr_ctrl/services/pdf_service.dart';
 import 'package:tssr_ctrl/widgets/drawer.dart';
 import 'package:http/http.dart' as http;
@@ -200,6 +201,10 @@ class HomePage extends GetView<HomePageController> {
                                         AppRouteNames.TSTORE_ADMIN),
                                     HomeScreenButton('Report', Icons.info,
                                         AppRouteNames.REPORT_HOME_PAGE),
+                                    HomeScreenButton(
+                                        'Admin Settings',
+                                        Icons.settings_suggest_rounded,
+                                        AppRouteNames.ADMIN_SETTINGS),
                                   ],
                                 ),
                               ],
@@ -370,6 +375,10 @@ class HomePage extends GetView<HomePageController> {
                                         AppRouteNames.TSTORE_ADMIN),
                                     HomeScreenButton('Report', Icons.info,
                                         AppRouteNames.REPORT_HOME_PAGE),
+                                    HomeScreenButton(
+                                        'Access Settings',
+                                        Icons.settings_suggest_rounded,
+                                        AppRouteNames.ADMIN_SETTINGS),
                                   ],
                                 ),
                               ],

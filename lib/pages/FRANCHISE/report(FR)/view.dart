@@ -18,87 +18,121 @@ class ReportFranchisePage extends GetView<ReportFranchiseController> {
       appBar: CustomAppBar('Report'),
       body: LayoutBuilder(builder: (context, c) {
         bool isMobile = Get.width <= 768 ? true : false;
-        return SizedBox(
-          height: Get.height,
-          width: Get.width,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: 60),
-                Text(
-                  'Report Services',
-                  style: TextStyle(
-                    fontSize: 20,
+        return GetBuilder(
+            init: controller,
+            builder: (controller) {
+              return SizedBox(
+                height: Get.height,
+                width: Get.width,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SizedBox(height: 60),
+                      Text(
+                        'Report Services',
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Container(
+                        height: 1,
+                        width: 100,
+                        color: ColorConstants.blachish_clr,
+                      ),
+                      SizedBox(height: 30),
+                      controller.state.canAccessReports == null ||
+                              controller.state.canAccessReports!
+                          ? FirestoreListView(
+                              shrinkWrap: true,
+                              query: DatabaseService.MetaInformations,
+                              itemBuilder: (context, doc) {
+                                return doc.data()['can_access_reports']
+                                    ? Wrap(
+                                        alignment: WrapAlignment.center,
+                                        runSpacing: 20,
+                                        spacing: 20,
+                                        children: [
+                                          ReportPageButton(
+                                            'Student Details\n(All Courses)',
+                                            isMobile: isMobile,
+                                            context: context,
+                                            controller: controller,
+                                            isPPTC: false,
+                                            pgmd: pageMode.potrait,
+                                            gdmd: GetDataMode.studentDetails,
+                                          ),
+                                          ReportPageButton(
+                                            'Attendence Register\n(All Courses)',
+                                            isMobile: isMobile,
+                                            context: context,
+                                            controller: controller,
+                                            isPPTC: false,
+                                            pgmd: pageMode.potrait,
+                                            gdmd:
+                                                GetDataMode.attendanceRegister,
+                                          ),
+                                          ReportPageButton(
+                                              'Class Test Marksheet\n(PPTTC/MTTC/PM/AM/AC) Course',
+                                              controller: controller,
+                                              isPPTC: true,
+                                              context: context,
+                                              pgmd: pageMode.landscape,
+                                              gdmd: GetDataMode.pptcClassTest,
+                                              isMobile: isMobile),
+                                          ReportPageButton(
+                                              'Commision Marksheet\n(PPTTC/MTTC) Course',
+                                              controller: controller,
+                                              isPPTC: true,
+                                              context: context,
+                                              pgmd: pageMode.potrait,
+                                              gdmd: GetDataMode.pptcCommision,
+                                              isMobile: isMobile),
+                                          ReportPageButton(
+                                              'Craft & Practical Work\n(PPTTC/MTTC) Course',
+                                              controller: controller,
+                                              isPPTC: true,
+                                              context: context,
+                                              pgmd: pageMode.landscape,
+                                              gdmd: GetDataMode.pptcPractical,
+                                              isMobile: isMobile),
+                                          ReportPageButton(
+                                              'Teaching Practice Marksheet\n(PPTTC/MTTC) Course',
+                                              controller: controller,
+                                              isPPTC: true,
+                                              context: context,
+                                              pgmd: pageMode.potrait,
+                                              gdmd: GetDataMode
+                                                  .pptcTeachingPractice,
+                                              isMobile: isMobile),
+                                          SizedBox(
+                                              width: Get.width, height: 10),
+                                        ],
+                                      )
+                                    : Center(
+                                        child: Text(
+                                          'Access to the reports is temporarily denied',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      );
+                              })
+                          : Center(
+                              child: Text(
+                                'Access to the reports is temporarily denied',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                    ],
                   ),
                 ),
-                SizedBox(height: 10),
-                Container(
-                  height: 1,
-                  width: 100,
-                  color: ColorConstants.blachish_clr,
-                ),
-                SizedBox(height: 30),
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  runSpacing: 20,
-                  spacing: 20,
-                  children: [
-                    ReportPageButton(
-                      'Student Details\n(All Courses)',
-                      isMobile: isMobile,
-                      context: context,
-                      controller: controller,
-                      isPPTC: false,
-                      pgmd: pageMode.potrait,
-                      gdmd: GetDataMode.studentDetails,
-                    ),
-                    ReportPageButton(
-                      'Attendence Register\n(All Courses)',
-                      isMobile: isMobile,
-                      context: context,
-                      controller: controller,
-                      isPPTC: false,
-                      pgmd: pageMode.potrait,
-                      gdmd: GetDataMode.attendanceRegister,
-                    ),
-                    ReportPageButton(
-                        'Class Test Marksheet\n(PPTTC/MTTC/PM/AM/AC) Course',
-                        controller: controller,
-                        isPPTC: true,
-                        context: context,
-                        pgmd: pageMode.landscape,
-                        gdmd: GetDataMode.pptcClassTest,
-                        isMobile: isMobile),
-                    ReportPageButton('Commision Marksheet\n(PPTTC/MTTC) Course',
-                        controller: controller,
-                        isPPTC: true,
-                        context: context,
-                        pgmd: pageMode.potrait,
-                        gdmd: GetDataMode.pptcCommision,
-                        isMobile: isMobile),
-                    ReportPageButton(
-                        'Craft & Practical Work\n(PPTTC/MTTC) Course',
-                        controller: controller,
-                        isPPTC: true,
-                        context: context,
-                        pgmd: pageMode.landscape,
-                        gdmd: GetDataMode.pptcPractical,
-                        isMobile: isMobile),
-                    ReportPageButton(
-                        'Teaching Practice Marksheet\n(PPTTC/MTTC) Course',
-                        controller: controller,
-                        isPPTC: true,
-                        context: context,
-                        pgmd: pageMode.potrait,
-                        gdmd: GetDataMode.pptcTeachingPractice,
-                        isMobile: isMobile),
-                    SizedBox(width: Get.width, height: 10),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
+              );
+            });
       }),
     );
   }
