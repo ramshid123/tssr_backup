@@ -1,36 +1,26 @@
 {
   "project_info": {
-    "project_number": "465121616495",
-    "project_id": "tssr-79f4a",
-    "storage_bucket": "tssr-79f4a.appspot.com"
+    "project_number": "951872769378",
+    "project_id": "control-web-abc",
+    "storage_bucket": "control-web-abc.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:465121616495:android:8a4e7b4f81a3421186e39a",
+        "mobilesdk_app_id": "1:951872769378:android:6d26c93745af8d7fdef03b",
         "android_client_info": {
           "package_name": "com.neptune.tssr"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "465121616495-7j8uimlgoiv1b4k2rbf52qnms0knhlqe.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBOu3aLaX0FXNYCXZmgv8nfjcuinOwUOOY"
+          "current_key": "AIzaSyD6gQJB6TCM5mYaS63RlX6duQQ1nlAdox0"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "465121616495-7j8uimlgoiv1b4k2rbf52qnms0knhlqe.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
