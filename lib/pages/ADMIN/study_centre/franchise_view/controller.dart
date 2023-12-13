@@ -178,7 +178,7 @@ class FranchisePageController extends GetxController {
                     await AuthService().logout();
                     await Future.delayed(100.milliseconds);
                     await AuthService().login(
-                        adminEmail ?? 'sf@tssr.com', adminPassword ?? '123123');
+                        adminEmail ?? 'admin@support.com', adminPassword ?? '12341234');
                     await Future.delayed(100.milliseconds);
                     await Get.toNamed(AppRouteNames.FRANCHISE_DATA);
                   } catch (e) {
@@ -188,7 +188,7 @@ class FranchisePageController extends GetxController {
                     await AuthService().logout();
                     await Future.delayed(100.milliseconds);
                     await AuthService().login(
-                        adminEmail ?? 'sf@tssr.com', adminPassword ?? '123123');
+                        adminEmail ?? 'admin@support.com', adminPassword ?? '12341234');
                     await Future.delayed(100.milliseconds);
                     await Get.toNamed(AppRouteNames.FRANCHISE_DATA);
                   }

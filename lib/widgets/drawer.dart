@@ -97,7 +97,7 @@ Widget kAdminLoginButton(SharedPreferences sf) {
         try {
           await AuthService().logout();
           await Future.delayed(1.seconds);
-          await AuthService().login('sf@tssr.com', '123123');
+          await AuthService().login('admin@support.com', '12341234');
           await sf.setBool(SharedPrefStrings.FROM_ADMIN, false);
         } catch (e) {
           print(e);

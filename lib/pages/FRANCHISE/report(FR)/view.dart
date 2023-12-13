@@ -54,7 +54,7 @@ class ReportFranchisePage extends GetView<ReportFranchiseController> {
                                         spacing: 20,
                                         children: [
                                           ReportPageButton(
-                                            'Student Details\n(All Courses)',
+                                            'Student Details',
                                             isMobile: isMobile,
                                             context: context,
                                             controller: controller,
@@ -63,7 +63,7 @@ class ReportFranchisePage extends GetView<ReportFranchiseController> {
                                             gdmd: GetDataMode.studentDetails,
                                           ),
                                           ReportPageButton(
-                                            'Attendence Register\n(All Courses)',
+                                            'Attendence Register',
                                             isMobile: isMobile,
                                             context: context,
                                             controller: controller,
@@ -73,7 +73,7 @@ class ReportFranchisePage extends GetView<ReportFranchiseController> {
                                                 GetDataMode.attendanceRegister,
                                           ),
                                           ReportPageButton(
-                                              'Class Test Marksheet\n(PPTTC/MTTC/PM/AM/AC) Course',
+                                              'Class Test Marksheet',
                                               controller: controller,
                                               isPPTC: true,
                                               context: context,
@@ -81,7 +81,7 @@ class ReportFranchisePage extends GetView<ReportFranchiseController> {
                                               gdmd: GetDataMode.pptcClassTest,
                                               isMobile: isMobile),
                                           ReportPageButton(
-                                              'Commision Marksheet\n(PPTTC/MTTC) Course',
+                                              'Commision Marksheet',
                                               controller: controller,
                                               isPPTC: true,
                                               context: context,
@@ -89,7 +89,7 @@ class ReportFranchisePage extends GetView<ReportFranchiseController> {
                                               gdmd: GetDataMode.pptcCommision,
                                               isMobile: isMobile),
                                           ReportPageButton(
-                                              'Craft & Practical Work\n(PPTTC/MTTC) Course',
+                                              'Craft & Practical Work',
                                               controller: controller,
                                               isPPTC: true,
                                               context: context,
@@ -97,7 +97,7 @@ class ReportFranchisePage extends GetView<ReportFranchiseController> {
                                               gdmd: GetDataMode.pptcPractical,
                                               isMobile: isMobile),
                                           ReportPageButton(
-                                              'Teaching Practice Marksheet\n(PPTTC/MTTC) Course',
+                                              'Teaching Practice Marksheet',
                                               controller: controller,
                                               isPPTC: true,
                                               context: context,
